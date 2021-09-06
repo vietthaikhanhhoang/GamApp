@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.activity.VideoActivity"
+    android:orientation="vertical"
+    >
+
+    <VideoView
+        android:id="@+id/simpleVideoView"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        />
+<Button android:id="@+id/btnPlay" android:layout_height="wrap_content"
+    android:layout_width="wrap_content" android:text="Play"/>
+    <Button android:id="@+id/btnPause" android:layout_height="wrap_content"
+        android:layout_width="wrap_content" android:text="Pause"/>
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@style/Base.Widget.AppCompat.SeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+
+
+</LinearLayout>

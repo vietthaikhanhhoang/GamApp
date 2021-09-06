@@ -1,0 +1,53 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="com.fragmentcustom.LoginFragment"
+    >
+
+<!-- TODO: Update blank fragment layout -->
+<LinearLayout android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="30dp"
+    android:padding="20dp"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hé lộ De Gea phớt lờ chỉ dẫn bắt 11m khiến MU thua, lỗi “tày đình” tăng nặng"
+        android:gravity="center_horizontal" />
+
+    <ImageView
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:contentDescription="Cho ảnh vào đây"
+        />
+    <TextView
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tiết lộ từ một nhà báo của kênh Sky Sports cho hay David de Gea đã được các HLV MU đưa chỉ dẫn bắt luân lưu nhưng không làm theo." />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Huỷ"
+            android:id="@+id/btnHuy"
+            />
+        <Button android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn"
+            android:id="@+id/btnLogin1"
+            />
+    </LinearLayout>
+</LinearLayout>
+
+
+
+</FrameLayout>

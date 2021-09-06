@@ -1,0 +1,42 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.fragmentcustom.PredictSlideBallFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.infinitebanner.InfiniteBannerView
+            android:id="@+id/infiBannerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:bannerAutoScroll="false"
+            app:bannerDividerWidth="8dp"
+            app:bannerForegroundWidthPercent="0.84"
+            app:bannerScrollReverse="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"></com.github.infinitebanner.InfiniteBannerView>
+
+        <com.rd.PageIndicatorView
+            android:id="@+id/pageIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/infiBannerView"
+            app:piv_animationType="scale"
+            app:piv_count="0"
+            app:piv_padding="5dp"
+            app:piv_radius="8dp"
+            app:piv_selectedColor="#E60E0E"
+            app:piv_unselectedColor="#000000" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>
