@@ -110,16 +110,16 @@ class VideoFragment : Fragment() {
         imgVolume = view.findViewById(R.id.imgVolume)
         imgVolume.setOnClickListener {
 
-            val volume = playerView.player!!.volume
-            Log.d("vietnb", "volume: $volume")
-
-            if(playerView.player!!.volume == 1.0f) {
-                playerView.player!!.volume = 0.0f
-                imgVolume.setImageResource(R.drawable.mute)
-            } else {
-                playerView.player!!.volume = 1.0f
-                imgVolume.setImageResource(R.drawable.unmute)
-            }
+//            val volume = playerView.player!!.volume
+//            Log.d("vietnb", "volume: $volume")
+//
+//            if(playerView.player!!.volume == 1.0f) {
+//                playerView.player!!.volume = 0.0f
+//                imgVolume.setImageResource(R.drawable.mute)
+//            } else {
+//                playerView.player!!.volume = 1.0f
+//                imgVolume.setImageResource(R.drawable.unmute)
+//            }
         }
 
 //        val heightStatus = Utils.getStatusBarHeight(this.requireContext())

@@ -22,15 +22,45 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.barservicegam.app.R
+import com.bumptech.glide.Glide
+import com.customview.ExoVideo
 import com.fragmentcustom.HomePagerFragment
 import com.fragmentcustom.RelativeFragment
 import com.khaolok.myloadmoreitem.DetailView
 import com.lib.Utils
 import com.lib.Utils.underline
 import data.dataHtml
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import org.json.JSONArray
 
-public class DetailNewsAdapter(var mList: ArrayList<dataHtml>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var positionVideoPlay: Int = -1
+    lateinit  var rclView:RecyclerView
+    lateinit  var mList:ArrayList<dataHtml>
+    lateinit var exoView: ExoVideo
+
+    constructor(context: Context, mList: ArrayList<dataHtml>, rclView: RecyclerView): this(context) {
+        this.mList = mList
+
+//        positionVideoPlay = 1
+        this.rclView = rclView
+        this.exoView = ExoVideo(this.context!!)
+
+        rclView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                    }
+                }
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+            }
+        })
+    }
+
     inner class DetailNewsTitle(v: View) : RecyclerView.ViewHolder(v){
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
 
@@ -76,6 +106,11 @@ public class DetailNewsAdapter(var mList: ArrayList<dataHtml>) : RecyclerView.Ad
 
     inner class DetailNewsWebview(v: View) : RecyclerView.ViewHolder(v) {
         var webNews: WebView = itemView!!.findViewById(R.id.webNews)
+    }
+
+    inner class DetailNewsVideo(v: View) : RecyclerView.ViewHolder(v) {
+        var layoutVideo: ConstraintLayout = itemView!!.findViewById(R.id.layoutVideo)
+        var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -128,6 +163,14 @@ public class DetailNewsAdapter(var mList: ArrayList<dataHtml>) : RecyclerView.Ad
                     false
                 )
             )
+        } else if(viewType == DetailView.DETAILNEWS_HOLDER_VIDEO) {
+            return DetailNewsVideo(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.detailnews_video_holder,
+                    parent,
+                    false
+                )
+            )
         }
 
         return DetailNewsContent (
@@ -157,6 +200,8 @@ public class DetailNewsAdapter(var mList: ArrayList<dataHtml>) : RecyclerView.Ad
             return DetailView.DETAILNEWS_HOLDER_IMAGE
         } else if(mList[position].type == "webview") {
             return DetailView.DETAILNEWS_HOLDER_WEBVIEW
+        } else if(mList[position].type == "video") {
+            return DetailView.DETAILNEWS_HOLDER_VIDEO
         }
 
         return DetailView.DETAILNEWS_HOLDER_CONTENT
@@ -208,6 +253,76 @@ public class DetailNewsAdapter(var mList: ArrayList<dataHtml>) : RecyclerView.Ad
         } else if (holder is DetailNewsAdapter.DetailNewsWebview) {
             var content = Utils.embeddStyleLOADHMTL(mList[position].content)
             holder.webNews.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null)
+        } else if (holder is DetailNewsAdapter.DetailNewsVideo) {
+            var content = mList[position].content
+            val radius = 0; // corner radius, higher value = more rounded
+            val margin = 0; // crop margin, set to 0 for corners with no crop
+            Glide.with(holder.imgCover.context)
+                .load("https://i1-thethao.vnecdn.net/2021/09/07/grant-jpeg-1631018928-4564-1631018954.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=v7oFroC3BqAGX6iov9xASA")
+                .transform(RoundedCornersTransformation(radius, margin))
+                .placeholder(R.drawable.thumbnews)
+                .into(holder.imgCover)
+
+            if(holder.layoutVideo.findViewWithTag<ExoVideo>(100) != null) {
+                val btnExtra = holder.layoutVideo.findViewWithTag<ExoVideo>(100)
+                if (btnExtra.parent != null) {
+                    (btnExtra.parent as ViewGroup).removeView(btnExtra)
+                }
+            }
+
+            if(positionVideoPlay == position) {
+                exoView.tag = 100
+                exoView.layoutParams = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT
+                )
+                holder.layoutVideo.addView(exoView)
+            }
+
+            holder.layoutVideo.setOnClickListener{
+                if(positionVideoPlay != position) {
+                    showVideoPosition(position)
+                }
+            }
+        }
+    }
+
+    fun showVideoPosition(position: Int) {
+        if (exoView.parent != null) {
+            (exoView.parent as ViewGroup).removeView(exoView)
+        }
+
+        Log.d("vietnb", "position luc nay: $position")
+        if(position == -1) {
+            pauseVideo()
+            return
+        }
+
+        positionVideoPlay = position
+
+        //var urlVideo = "https://nld.mediacdn.vn/291774122806476800/2021/9/7/2742493976237-16310038843781108475104.mp4"
+        var urlVideo = mList[position].content
+//        val mVideo = this.mList.getJSONObject(position)
+//        if(mVideo.has("listVideos")) {
+//            val listVideos = mVideo.getJSONArray("listVideos")
+//            if(listVideos.length() > 0) {
+//                urlVideo = listVideos[0].toString()
+//            }
+//        }
+
+        exoView.setUrlVideo(urlVideo)
+        notifyItemChanged(position)
+    }
+
+    fun pauseVideo() {
+        if(exoView != null) {
+            exoView.pauseVideo()
+        }
+    }
+
+    fun playVideo() {
+        if(exoView != null) {
+            exoView.playVideo()
         }
     }
 }

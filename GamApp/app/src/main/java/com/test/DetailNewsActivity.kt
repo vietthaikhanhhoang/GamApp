@@ -180,8 +180,8 @@ class DetailNewsActivity : AppCompatActivity() {
 //
 //        arrayContent.add(dataHtml(arrRelative.toString(), "relative"))
 
-        detailNewsAdapter = DetailNewsAdapter(arrayContent)
-        rclView.adapter = detailNewsAdapter
+//        detailNewsAdapter = DetailNewsAdapter(arrayContent)
+//        rclView.adapter = detailNewsAdapter
     }
 
     override fun onBackPressed() {

@@ -22,11 +22,11 @@
             android:textColor="#2E2F32"
             android:textSize="17dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imgCover"
+            app:layout_constraintStart_toEndOf="@+id/layoutCover"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imgCover"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutCover"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
@@ -37,7 +37,27 @@
             app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            >
+
+            <ImageView
+                android:id="@+id/imgCover"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imgIconMask"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/icon_video_mask" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/txtDesc"
@@ -50,7 +70,7 @@
             android:maxLines="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imgCover" />
+            app:layout_constraintStart_toEndOf="@+id/layoutCover" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

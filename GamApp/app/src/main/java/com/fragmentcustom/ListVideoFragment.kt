@@ -33,6 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private const val ARG_PARAM3 = "param3"
 
 /**
  * A simple [Fragment] subclass.
@@ -43,6 +44,7 @@ class ListVideoFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var category: JSONObject? = null
 
     lateinit var rclView: RecyclerView
     lateinit var listVideoAdapter: ListVideoAdapter
@@ -56,6 +58,10 @@ class ListVideoFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+
+            if(it.getString(ARG_PARAM3) == null) {
+                category = JSONObject(it.getString(ARG_PARAM3))
+            }
         }
     }
 
@@ -109,7 +115,14 @@ class ListVideoFragment : Fragment() {
             .build()
             .create(APIService::class.java)
 
-        val response = retrofit.getListVideos(null, null, Global.getHeaderMap())
+        var subcid = 888
+        if(category != null) {
+            if(category!!.has("id")) {
+                subcid = category!!.getInt("id")
+            }
+        }
+
+        val response = retrofit.getListVideos(subcid, null, Global.getHeaderMap())
         response.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -179,7 +192,14 @@ class ListVideoFragment : Fragment() {
             .build()
             .create(APIService::class.java)
 
-        val response = retrofit.getListVideos(lid, realsize, Global.getHeaderMap())
+        var subcid = 888
+        if(category != null) {
+            if(category!!.has("id")) {
+                subcid = category!!.getInt("id")
+            }
+        }
+
+        val response = retrofit.getListVideos(subcid, realsize, Global.getHeaderMap())
         response.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("vietnb", "successful")
@@ -204,7 +224,6 @@ class ListVideoFragment : Fragment() {
                             {
                                 val linfos = jsonObject.getJSONArray("linfos")
 
-                                val positionStart = arrVideos.length()
                                 val arrVideosMore = JSONArray()
                                 for (i in 0 until linfos.length()) {
                                     val infos = JSONObject(linfos[i].toString())
@@ -220,7 +239,6 @@ class ListVideoFragment : Fragment() {
 
                                 listVideoAdapter.addData(arrVideosMore)
                                 scrollListener.setLoaded()
-                                listVideoAdapter.notifyItemRangeInserted(positionStart, arrVideos.length())
                             }
                         }
                     }
@@ -236,6 +254,47 @@ class ListVideoFragment : Fragment() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("vietnb", "nhay vao start fragment ZZZZZZZ")
+//        listVideoAdapter.playVideo()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("vietnb", "nhay vao stop fragment")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        readyVideo(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("vietnb", "nhay vao pause fragment")
+        readyVideo(false)
+        pauseVideo()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("vietnb", "nhay vao destroy fragment")
+        pauseVideo()
+    }
+
+    fun pauseVideo() {
+        if(listVideoAdapter != null) {
+            listVideoAdapter.pauseVideo()
+        }
+    }
+
+    fun readyVideo(isReady: Boolean) {
+        if(listVideoAdapter != null) {
+            listVideoAdapter.readyVideo(isReady)
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -247,11 +306,12 @@ class ListVideoFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String, param2: String, param3: String) =
             ListVideoFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
+                    putString(ARG_PARAM3, param2)
                 }
             }
     }

@@ -33,17 +33,19 @@ class ImageActivity : AppCompatActivity() {
                     resource: Drawable,
                     @Nullable transition: Transition<in Drawable?>?
                 ) {
-                    val bitmap = (resource as BitmapDrawable).bitmap
-                    Log.d("vietnb", "chieu rong: " + bitmap.width)
-                    Log.d("vietnb", "chieu cao: " + bitmap.height)
+                    if(resource is BitmapDrawable) {
+                        val bitmap = resource.bitmap
+                        Log.d("vietnb", "chieu rong: " + bitmap.width)
+                        Log.d("vietnb", "chieu cao: " + bitmap.height)
 
-                    imgView.setImageBitmap(bitmap)
-                    val width = Utils.getScreenWidth() - 32 //theo dp
-                    val height:Float = (width * bitmap.height)/bitmap.width //kich thuoc that cua anh
+                        imgView.setImageBitmap(bitmap)
+                        val width = Utils.getScreenWidth() - 32 //theo dp
+                        val height:Float = (width * bitmap.height)/bitmap.width //kich thuoc that cua anh
 
-                    val param = imgView.layoutParams
-                    param.height = height.toInt().toPx() //gan len px phai day lai
-                    imgView.layoutParams = param
+                        val param = imgView.layoutParams
+                        param.height = height.toInt().toPx() //gan len px phai day lai
+                        imgView.layoutParams = param
+                    }
                 }
 
                 override fun onLoadCleared(@Nullable placeholder: Drawable?) {}

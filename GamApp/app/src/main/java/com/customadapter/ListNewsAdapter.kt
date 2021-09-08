@@ -1,7 +1,5 @@
 package com.customadapter
 
-import android.R.array
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.api.Global
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
-import com.fragmentcustom.ContentFragment
 import com.khaolok.myloadmoreitem.Constant
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import org.json.JSONArray
@@ -22,6 +18,7 @@ import org.json.JSONObject
 public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = true) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class NewsHolder1(v: View) : RecyclerView.ViewHolder(v){
+        var imgIconMask: ImageView = itemView!!.findViewById(R.id.imgIconMask)
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
         var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
@@ -107,6 +104,14 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
             if(art.has("posttime")) {
                 val posttime:Long = art["posttime"] as Long
                 //nameWebsite = nameWebsite + " | " + Global.currentTimeSecUTC(posttime)
+            }
+
+            holder.imgIconMask.visibility = View.INVISIBLE
+            if(art.has("listVideos")) {
+                val listVideos = art.getJSONArray("listVideos")
+                if(listVideos.length() > 0) {
+                    holder.imgIconMask.visibility = View.VISIBLE
+                }
             }
 
             if(art.has("sizeCmt")) {

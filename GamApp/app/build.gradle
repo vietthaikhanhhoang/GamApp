@@ -37,8 +37,13 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.exoplayer:exoplayer:2.15.0'
-//    implementation 'com.github.norulab:android-exoplayer-fullscreen:1.2.1'
+//    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.13.2'
+    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:v2.1.0'
+//    implementation 'com.github.sarbagyastha:android-youtubeextractor:2.4.1'
+
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -51,6 +56,7 @@ dependencies {
     implementation 'com.romandanylyk:pageindicatorview:1.0.3'
     implementation 'com.github.markshawn:infinite-banner:1.0.0'
     implementation 'androidx.wear:wear:1.0.0'
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 

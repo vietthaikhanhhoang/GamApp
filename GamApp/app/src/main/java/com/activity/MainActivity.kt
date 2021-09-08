@@ -10,6 +10,8 @@ import com.fragmentcustom.*
 import com.fragula.Navigator
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lib.*
+import com.lib.eventbus.EventBusFire
+import org.greenrobot.eventbus.EventBus
 
 class MainActivity : AppCompatActivity() {
     lateinit var navigatorTabNews: Navigator
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bottomView: BottomNavigationView
 
     var homePagerFragment = HomePagerFragment.newInstance("", "")
-    var listVideoFragment = ListVideoFragment.newInstance("", "")
+    var listVideoFragment = VideoPagerFragment.newInstance("", "")
     var exploreFragment = AutoSearchFragment.newInstance("", "")
     var settingFragment = SettingFragment.newInstance("", "")
 
@@ -115,6 +117,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setBottomBarListener() {
         bottomView.setOnNavigationItemSelectedListener {
+
+            EventBus.getDefault().post(EventBusFire("pauseVideo", valueString = ""))
+
             return@setOnNavigationItemSelectedListener selectTab(it.itemId)
         }
     }

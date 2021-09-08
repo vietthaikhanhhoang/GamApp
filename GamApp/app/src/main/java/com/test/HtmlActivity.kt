@@ -64,8 +64,8 @@ class HtmlActivity : AppCompatActivity() {
 
 //        Log.d("vietnb", "content boc tach: " + arrayContent.toString())
 
-        detailNewsAdapter = DetailNewsAdapter(arrayContent)
-        rclView.adapter = detailNewsAdapter
+//        detailNewsAdapter = DetailNewsAdapter(arrayContent)
+//        rclView.adapter = detailNewsAdapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

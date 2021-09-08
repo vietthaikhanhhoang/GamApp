@@ -14,4 +14,5 @@ object DetailView {
     const val DETAILNEWS_HOLDER_CONTENT = 3
     const val DETAILNEWS_HOLDER_IMAGE = 4
     const val DETAILNEWS_HOLDER_WEBVIEW = 5
+    const val DETAILNEWS_HOLDER_VIDEO = 6
 }

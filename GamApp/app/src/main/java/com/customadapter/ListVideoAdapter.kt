@@ -34,7 +34,7 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
                 when (newState) {
                     RecyclerView.SCROLL_STATE_IDLE -> {
                         setPositionVideowhenScrolled()
-//                        println("end scroll")
+                        println("end scroll")
                     }
 //                    RecyclerView.SCROLL_STATE_DRAGGING -> //println("Scrolling now")
 //                    RecyclerView.SCROLL_STATE_SETTLING -> //println("Scroll Settling")
@@ -147,7 +147,6 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("vietnb", "nhay vao bind data $position")
         if(holder is ImageHolder) {
             val video = mList.getJSONObject(position)
             holder.bindData(video, position)
@@ -159,7 +158,13 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     }
 
     fun setPositionVideowhenScrolled() {
-        val position = RecyclerViewPositionHelper.createHelper(rclView).findFirstCompletelyVisibleItemPosition()
+        var position = RecyclerViewPositionHelper.createHelper(rclView).findFirstCompletelyVisibleItemPosition()
+        if(position == -1) {
+            position = RecyclerViewPositionHelper.createHelper(rclView).findFirstVisibleItemPosition()
+        }
+
+        Log.d( "vietnb", "vao den day aaa $position")
+        Log.d( "vietnb", "positionVideoPlay $positionVideoPlay")
         if(positionVideoPlay != position) {
             showVideoPosition(position)
         }
@@ -170,23 +175,25 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
             (exoView.parent as ViewGroup).removeView(exoView)
         }
 
+        Log.d("vietnb", "position luc nay: $position")
+        if(position == -1) {
+            pauseVideo()
+            return
+        }
+
         positionVideoPlay = position
 
         var urlVideo = ""
-        if(position < this.mList.length()) {
-            val mVideo = this.mList.getJSONObject(position)
-            if(mVideo.has("listVideos")) {
-                val listVideos = mVideo.getJSONArray("listVideos")
-                if(listVideos.length() > 0) {
-                    urlVideo = listVideos[0].toString()
-                }
+        val mVideo = this.mList.getJSONObject(position)
+        if(mVideo.has("listVideos")) {
+            val listVideos = mVideo.getJSONArray("listVideos")
+            if(listVideos.length() > 0) {
+                urlVideo = listVideos[0].toString()
             }
-
-            Log.d("vietnb", "check lai url $urlVideo")
-            exoView.setUrlVideo(urlVideo)
-            Log.d("vietnb", "end scroll va tinh lai $position")
-            notifyItemChanged(position)
         }
+
+        exoView.setUrlVideo(urlVideo)
+        notifyItemChanged(position)
     }
 
     fun addData(array: JSONArray) {
@@ -194,10 +201,11 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
             (exoView.parent as ViewGroup).removeView(exoView)
         }
 
+        val positionStart = mList.length()
         for (i in 0 until array.length()) {
             this.mList.put(array[i])
         }
-        notifyDataSetChanged()
+        notifyItemRangeInserted(positionStart, mList.length())
     }
 
     fun addLoadingView() {
@@ -226,5 +234,23 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
 //            }
 //        }
 
+    }
+
+    fun pauseVideo() {
+        if(exoView != null) {
+            exoView.pauseVideo()
+        }
+    }
+
+    fun playVideo() {
+        if(exoView != null) {
+            exoView.playVideo()
+        }
+    }
+
+    fun readyVideo(isReady: Boolean) {
+        if(exoView != null) {
+            exoView.readyVideo(isReady)
+        }
     }
 }

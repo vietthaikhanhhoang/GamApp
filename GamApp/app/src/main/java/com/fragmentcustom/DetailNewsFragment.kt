@@ -179,16 +179,26 @@ class DetailNewsFragment : Fragment() {
                         var content = src
                         arrayContent.add(dataHtml(content, type))
                     }
+                } else if (element.tagName() == "video") {
+                    Log.d("vietnb", "tag video: $element")
+//<video controls="controls" id="fplayVideo0" onclick="showVideoArticle('https://nld.mediacdn.vn/291774122806476800/2021/9/7/2742493976237-16310038843781108475104.mp4')" width="100%"></video>
+                    if(element.hasAttr("onclick")) {
+                        var textElement = element.attr("onclick")
+
+                        //showVideoArticle('https://media.tinmoi24.vn/24h/upload/3-2021/videoclip/2021-09-07/cp_special_worldcup-1631018001-var_vietuc.m3u8')
+
+                        val start = textElement.indexOf("showVideoArticle('")
+                        val end = textElement.indexOf("')")
+
+                        if(start > -1 && end > -1) {
+                            val strContent = textElement.subSequence(start + "showVideoArticle('".length, end).toString()
+                            val arrContent = strContent.split(",").toTypedArray()
+                            var type = "video"
+                            arrayContent.add(dataHtml(arrContent[0].toString(), type))
+                        }
+                    }
                 }
             }
-
-//            for (i in 0 until arrayContent.size) {
-//                val data = arrayContent[i]
-//                Log.d("type", "kiem tra nhanh: " + data.type)
-//            }
-
-
-            //        Log.d("vietnb", "content native: " + arrayContent.toString())
         }
         else {
             arrayContent.add(dataHtml(content, "webview"))
@@ -207,7 +217,7 @@ class DetailNewsFragment : Fragment() {
 //
 //        arrayContent.add(dataHtml(arrRelative.toString(), "relative"))
 
-        detailNewsAdapter = DetailNewsAdapter(arrayContent)
+        detailNewsAdapter = DetailNewsAdapter(this.requireContext(), arrayContent, rclView)
         rclView.adapter = detailNewsAdapter
     }
 
@@ -341,6 +351,24 @@ class DetailNewsFragment : Fragment() {
         //getRelativeNews()
 
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("vietnb", "nhay vao pause fragment")
+        pauseVideo()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("vietnb", "nhay vao destroy fragment")
+        pauseVideo()
+    }
+
+    fun pauseVideo() {
+        if(detailNewsAdapter != null) {
+            detailNewsAdapter.pauseVideo()
+        }
     }
 
     companion object {
