@@ -16,7 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
-import com.activity.MainActivity
+import com.barservicegam.app.MainActivity
 import com.barservicegam.app.R
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer

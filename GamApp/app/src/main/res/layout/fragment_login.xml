@@ -10,40 +10,40 @@ tools:context="com.fragmentcustom.LoginFragment"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="30dp"
-    android:padding="20dp"
+    android:layout_margin="20dp"
+    android:padding="10dp"
     >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hé lộ De Gea phớt lờ chỉ dẫn bắt 11m khiến MU thua, lỗi “tày đình” tăng nặng"
-        android:gravity="center_horizontal" />
 
     <ImageView
-        android:layout_margin="5dp"
-        android:layout_gravity="center"
-        android:layout_width="200dp"
+        android:src="@drawable/app_icon"
+        android:layout_width="100dp"
         android:layout_height="100dp"
-        android:contentDescription="Cho ảnh vào đây"
-        />
+        android:layout_gravity="center"
+        android:layout_margin="0dp"
+        android:contentDescription="Cho ảnh vào đây" />
     <TextView
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tiết lộ từ một nhà báo của kênh Sky Sports cho hay David de Gea đã được các HLV MU đưa chỉ dẫn bắt luân lưu nhưng không làm theo." />
+        android:text="Đăng nhập để có thể bình luận bài viết và thể hiện cảm xúc" />
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center">
         <Button
-            android:layout_width="wrap_content"
+            android:textAllCaps = "false"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Huỷ"
-            android:id="@+id/btnHuy"
+            android:text="Đăng nhập bằng Facebook"
+            android:id="@+id/btnLoginFacebook"
             />
-        <Button android:layout_marginLeft="20dp"
-            android:layout_width="wrap_content"
+        <Button
+            android:textAllCaps = "false"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chọn"
-            android:id="@+id/btnLogin1"
+            android:text="Đăng nhập bằng Zalo"
+            android:id="@+id/btnLoginApple"
             />
     </LinearLayout>
 </LinearLayout>

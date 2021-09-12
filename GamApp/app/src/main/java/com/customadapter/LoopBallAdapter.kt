@@ -503,7 +503,7 @@ public class LoopBallAdapter(var mList: JSONArray) : AbsBannerAdapter() {
                                 val jObject = JSONObject()
                                 jObject.put("match_id", matchID)
                                 jObject.put("opt_id", optID)
-                                sharedPreference.save(PREFERENCE.BETTINGMATCH, jObject)
+                                sharedPreference.save(PREFERENCE.BETTINGMATCH, jObject.toString())
                             }
                         }
                     }

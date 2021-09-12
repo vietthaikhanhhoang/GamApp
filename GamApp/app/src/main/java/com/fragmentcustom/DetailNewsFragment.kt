@@ -195,6 +195,13 @@ class DetailNewsFragment : Fragment() {
                             val arrContent = strContent.split(",").toTypedArray()
                             var type = "video"
                             arrayContent.add(dataHtml(arrContent[0].toString(), type))
+                        } else {
+                            if(art != null) {
+                                if (art.has("cover")) {
+                                    val cover = art.getString("cover")
+                                    arrayContent.add(dataHtml(cover, "video"))
+                                }
+                            }
                         }
                     }
                 }

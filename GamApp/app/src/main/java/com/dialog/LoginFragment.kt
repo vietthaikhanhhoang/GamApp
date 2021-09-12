@@ -1,4 +1,4 @@
-package com.fragmentcustom
+package com.dialog
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
+import com.barservicegam.app.MainActivity
 import com.barservicegam.app.R
+import com.lib.Utils
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -39,20 +41,25 @@ class LoginFragment : DialogFragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_login, container, false)
-        val btnAccept = view.findViewById<Button>(R.id.btnLogin1)
+        val btnAccept = view.findViewById<Button>(R.id.btnLoginFacebook)
         btnAccept.setOnClickListener{
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.loginFacebook()
+            }
+
             //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
 
-            onResult?.invoke(10.0, "be continue")
+            //onResult?.invoke(10.0, "be continue")
             dismiss()
 
         }
 
-        val btnHuy = view.findViewById<Button>(R.id.btnHuy)
-        btnHuy.setOnClickListener{
-            //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
+        val btnLoginApple = view.findViewById<Button>(R.id.btnLoginApple)
+//        btnLoginApple.setOnClickListener{
+//            //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
+//            dismiss()
+//        }
 
         return view
     }

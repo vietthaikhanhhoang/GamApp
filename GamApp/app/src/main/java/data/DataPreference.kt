@@ -9,23 +9,15 @@ import java.lang.reflect.Type
 
 object PREFERENCE {
     const val BETTINGMATCH = "BETTINGMATCH"
+    const val ACCOUNTUSER = "ACCOUNTUSER"
+
+    const val AUTOPLAY = "AUTOPLAY"
+    const val BRIGHT = "BRIGHT"
 }
 
 class DataPreference(val context: Context) {
     private val PREFS_NAME = "kotlincodes"
     val sharedPref: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
-    fun save(KEY_NAME: String, jObject: JSONObject) {
-
-        val array = getValueArray(KEY_NAME)
-        array.add(jObject)
-
-        val editor: SharedPreferences.Editor = sharedPref.edit()
-        val gson = Gson()
-        val json: String = gson.toJson(array)
-        editor.putString(KEY_NAME, json)
-        editor.apply()
-    }
 
     fun getValueArray(KEY_NAME: String): ArrayList<JSONObject> {
 
@@ -70,8 +62,15 @@ class DataPreference(val context: Context) {
     fun getValueString(KEY_NAME: String): String? {
 
         return sharedPref.getString(KEY_NAME, null)
+    }
 
+    fun getValueJSON(KEY_NAME: String): JSONObject? {
+        val value = sharedPref.getString(KEY_NAME, "")!!
+        if(value.isNotEmpty()) {
+            return JSONObject(value)
+        }
 
+        return null
     }
 
     fun getValueInt(KEY_NAME: String): Int {
@@ -79,10 +78,8 @@ class DataPreference(val context: Context) {
         return sharedPref.getInt(KEY_NAME, 0)
     }
 
-    fun getValueBoolien(KEY_NAME: String, defaultValue: Boolean): Boolean {
-
+    fun getValueBoolean(KEY_NAME: String, defaultValue: Boolean): Boolean {
         return sharedPref.getBoolean(KEY_NAME, defaultValue)
-
     }
 
     fun clearSharedPreference() {

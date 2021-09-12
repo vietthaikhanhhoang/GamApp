@@ -1,13 +1,9 @@
-package com.barservicegam.app
+package com.customview
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.activity.MainActivity
 import com.barservicegam.app.R
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
@@ -15,13 +11,12 @@ import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerView
 import com.lib.OrientationUtils
 import com.lib.Utils
-import com.lib.toPx
 
-class DemoYoutubeVideo : YouTubeBaseActivity() {
+class YoutubeVideo : AppCompatActivity() {
     lateinit var youtubePlayerView: YouTubePlayerView
     lateinit var youtubePlayer: YouTubePlayer
     lateinit var onInitializedListener: YouTubePlayer.OnInitializedListener
-    lateinit var layoutParent:ConstraintLayout
+    lateinit var layoutParent: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

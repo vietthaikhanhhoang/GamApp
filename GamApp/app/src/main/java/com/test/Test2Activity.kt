@@ -9,7 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.FragmentManager
 import com.barservicegam.app.R
-import com.fragmentcustom.LoginFragment
 import com.lib.eventbus.EventBusFire
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -58,14 +57,14 @@ class Test2Activity : AppCompatActivity() {
         constraintLayout.addView(button)
         button.setOnClickListener{
 //            Toast.makeText(this, "Goi ham LoginFragment", Toast.LENGTH_SHORT)
-            Log.d("vietnb", "goi ham loginfragment")
-            val fm: FragmentManager = supportFragmentManager
-            val popupDialogFrag = LoginFragment.newInstance("ho1", "hi2")
-            popupDialogFrag.show(fm, "popup")
-            popupDialogFrag.onResult = { sum, text ->
-                // do something
-                Log.d("vietnb", sum.toString() + " || " + text.toString())
-            }
+//            Log.d("vietnb", "goi ham loginfragment")
+//            val fm: FragmentManager = supportFragmentManager
+//            val popupDialogFrag = LoginFragment.newInstance("ho1", "hi2")
+//            popupDialogFrag.show(fm, "popup")
+//            popupDialogFrag.onResult = { sum, text ->
+//                // do something
+//                Log.d("vietnb", sum.toString() + " || " + text.toString())
+//            }
         }
 
         val button2 = Button(this)

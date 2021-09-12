@@ -257,8 +257,12 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
             var content = mList[position].content
             val radius = 0; // corner radius, higher value = more rounded
             val margin = 0; // crop margin, set to 0 for corners with no crop
+
+            //content = "https://media.tinmoi24.vn/24h/upload/3-2021/videoclip/2021-07-23/1626976327-layvosinhtu.m3u8"
+            //https://i1-thethao.vnecdn.net/2021/09/07/grant-jpeg-1631018928-4564-1631018954.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=v7oFroC3BqAGX6iov9xASA
+
             Glide.with(holder.imgCover.context)
-                .load("https://i1-thethao.vnecdn.net/2021/09/07/grant-jpeg-1631018928-4564-1631018954.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=v7oFroC3BqAGX6iov9xASA")
+                .load(content)
                 .transform(RoundedCornersTransformation(radius, margin))
                 .placeholder(R.drawable.thumbnews)
                 .into(holder.imgCover)

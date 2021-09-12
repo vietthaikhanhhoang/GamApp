@@ -6,12 +6,16 @@ import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.Surface
 import android.view.View
@@ -27,6 +31,7 @@ import com.barservicegam.app.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import java.util.HashMap
 import kotlin.math.roundToInt
 
 
@@ -83,6 +88,22 @@ fun Fragment.hideSoftKeyboard(){
 }
 
 object Utils {
+
+    fun getThumbVideoMp4(videoPath: String?): Bitmap? {
+        var bitmap: Bitmap? = null
+        var mediaMetadataRetriever: MediaMetadataRetriever? = null
+        try {
+            mediaMetadataRetriever = MediaMetadataRetriever()
+            mediaMetadataRetriever.setDataSource(videoPath, HashMap<String, String>())
+            bitmap = mediaMetadataRetriever.frameAtTime
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            mediaMetadataRetriever?.release()
+        }
+        return bitmap
+    }
+
     fun getActivity(context: Context): Activity? {
         var context = context
         while (context is ContextWrapper) {
@@ -243,6 +264,14 @@ object Utils {
         html+= "</body></html>"
 
         return html
+    }
+
+    fun setImageName(name:String, context: Context, image: ImageView) {
+        val PACKAGE_NAME = context.packageName
+        val imgId = context.resources.getIdentifier("$PACKAGE_NAME:drawable/$name", null, null)
+        Log.d("vietnb", "IMG ID :: $imgId")
+        Log.d("vietnb", "PACKAGE_NAME :: $PACKAGE_NAME")
+        image.setImageBitmap(BitmapFactory.decodeResource(context.resources, imgId))
     }
 }
 
