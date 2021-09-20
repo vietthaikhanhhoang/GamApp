@@ -12,15 +12,9 @@ import com.api.Global
 import com.barservicegam.app.R
 import com.customadapter.DetailNewsAdapter
 import com.fragmentcustom.RelativeFragment
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.hannesdorfmann.swipeback.Position
 import com.hannesdorfmann.swipeback.SwipeBack
 import data.dataHtml
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -67,7 +61,7 @@ class DetailNewsActivity : AppCompatActivity() {
 
         if(art?.has("sid")) {
             val sid = art.getInt("sid")
-            category = category + "|" + Global.getNameWebsite(sid)
+            category = category + "|" + Global.getNameWebsite(sid, txtNative.context)
         }
 
         if(art?.has("posttime")) {
@@ -226,7 +220,7 @@ class DetailNewsActivity : AppCompatActivity() {
         txtTitle = findViewById(R.id.txtTitle)
         if(art.has("sid")) {
             val sid = art.getInt("sid")
-            txtTitle.text = Global.getNameWebsite(sid)
+            txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)
         }
 
         btnBack = findViewById(R.id.btnBack)

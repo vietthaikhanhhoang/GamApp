@@ -47,8 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
-        android:background="#EDE7E7"
-        android:backgroundTint="#E1DFDF"
+        android:background="@color/viewLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgWebsite" />
@@ -67,25 +66,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutVideo" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgWebsite"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginStart="17dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <ImageView
+        android:id="@+id/imgShare"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sharevideo"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+
+    <ImageView
+        android:id="@+id/imgComment"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/commentvideo"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
+        app:layout_constraintEnd_toStartOf="@+id/imgShare"
+        app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+
     <TextView
-        android:id="@+id/txtWebsite"
+        android:id="@+id/txtDesc"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
         android:text="Tuổi trẻ xã hội"
+        app:layout_constraintBottom_toBottomOf="@+id/imgWebsite"
         app:layout_constraintStart_toEndOf="@+id/imgWebsite"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+        app:layout_constraintTop_toTopOf="@+id/imgWebsite" />
+
+    <TextView
+        android:id="@+id/txtComment"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/round_corner_comment_video"
+        android:fontFamily="@font/roboto_medium_numbers"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="1"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imgComment"
+        app:layout_constraintEnd_toEndOf="@+id/imgComment"
+        app:layout_constraintStart_toStartOf="@+id/imgComment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,13 @@
 package com.fragmentcustom
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.barservicegam.app.MainActivity
@@ -47,12 +47,17 @@ class YoutubeFragment : Fragment() {
     var isFullScreen:Boolean = false
 
     lateinit var layoutVideo: ConstraintLayout
-    lateinit var btnFullScreen: Button
-    lateinit var btnPlay: Button
+    lateinit var imgFullScreen: ImageView
+    lateinit var imgPlay: ImageView
+    lateinit var imgMute: ImageView
     lateinit var txtTime: TextView
     lateinit var seekBarVideo: SeekBar
+    var valueVolume = 1 //default la bat tieng
+    lateinit var btnNextVideo: Button
 
     var tracker = YouTubePlayerTracker()
+
+    var isDragSeekBar = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,55 @@ class YoutubeFragment : Fragment() {
         }
     }
 
+    fun initYoutubeWithVideoId(videoID: String) {
+        youtube_player_view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            override fun onReady(youTubePlayer: YouTubePlayer) {
+                youTubePlayer.cueVideo(videoID, 0f)
+                youtubePlayer = youTubePlayer
+                if(valueVolume == -1) {
+                    valueVolume = 1
+                    youtubePlayer.setVolume(1)
+                }
+
+                youtubePlayer?.addListener(tracker)
+            }
+
+            override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
+                super.onError(youTubePlayer, error)
+                Log.d("vietnb", "Có lỗi xảy ra")
+            }
+
+            override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                super.onCurrentSecond(youTubePlayer, second)
+
+                if(isDragSeekBar) return
+
+                val duration:Float = tracker.videoDuration
+
+                val textcurrent = String.format("%02d:%02d", (second / 60).toInt(),((second % 60)).toInt())
+                val textduration = String.format("%02d:%02d", (tracker.videoDuration / 60).toInt(),((tracker.videoDuration % 60)).toInt())
+                txtTime.text = textcurrent + "/" + textduration
+                Log.d("vietnb", "thoi gian hien tai: $second || tong: $duration")
+
+                if(duration != 0f) {
+                    val value = (second*100/duration).toInt()
+//                    Log.d("vietnb", "thoi gian hien tai: $value")
+                    seekBarVideo.progress = value
+                }
+            }
+
+            override fun onStateChange(
+                youTubePlayer: YouTubePlayer,
+                state: PlayerConstants.PlayerState
+            ) {
+                super.onStateChange(youTubePlayer, state)
+                if(state == PlayerConstants.PlayerState.ENDED) {
+                    Toast.makeText(requireContext(), "Ket thuc video", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,19 +123,45 @@ class YoutubeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_youtube, container, false)
         layoutVideo = view.findViewById(R.id.layoutVideo)
-        btnFullScreen = view.findViewById(R.id.btnFullScreen)
-        btnPlay = view.findViewById(R.id.btnPlay)
+        imgFullScreen = view.findViewById(R.id.imgFullScreen)
+        imgPlay = view.findViewById(R.id.imgPlay)
+        imgMute = view.findViewById(R.id.imgMute)
+        btnNextVideo = view.findViewById(R.id.btnNextVideo)
+
         txtTime = view.findViewById(R.id.txtTime)
         seekBarVideo = view.findViewById(R.id.seekBarVideo)
 
+        btnNextVideo.setOnClickListener {
+            Log.d("vietnb", "click vao next video")
+            //initYoutubeWithVideoId("KkLOKhvyhS4")
+//            youtubePlayer.cueVideo("KkLOKhvyhS4", 0f)
+            youtubePlayer.loadVideo("KkLOKhvyhS4", 0f)
+        }
+
         this.seekBarVideo.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                isDragSeekBar = true
+                if(tracker.state == PlayerConstants.PlayerState.PLAYING) {
+                    youtubePlayer.pause()
+                }
+
+                val second = (progress*tracker.videoDuration)/100
+                youtubePlayer.seekTo((progress*tracker.videoDuration)/100)
+                Log.d("vietnb", "zzzzzzz: $second")
+
+                val textcurrent = String.format("%02d:%02d", (second / 60).toInt(),((second % 60)).toInt())
+                val textduration = String.format("%02d:%02d", (tracker.videoDuration / 60).toInt(),((tracker.videoDuration % 60)).toInt())
+                txtTime.text = textcurrent + "/" + textduration
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isDragSeekBar = true
+                Log.d("vietnb", "Nhay vao onStartTrackingTouch")
+                youtubePlayer.pause()
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekTimeVideoWhenSeekBarDragged()
             }
         })
 
@@ -92,41 +172,30 @@ class YoutubeFragment : Fragment() {
 
         layoutParent = view.findViewById(R.id.layoutParent)
 
-        youtube_player_view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                youTubePlayer.cueVideo("GSn3daa1ZX4", 0f)
-                youtubePlayer = youTubePlayer
+        initYoutubeWithVideoId("GSn3daa1ZX4")
 
-                youtubePlayer?.addListener(tracker)
-            }
-
-            override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
-                super.onCurrentSecond(youTubePlayer, second)
-                val duration:Float = tracker.videoDuration
-
-                txtTime.text = String.format("%02d:%02d", (second / 60).toInt(),((second % 60)).toInt())
-//                Log.d("vietnb", "thoi gian hien tai: $second || tong: $duration")
-
-                if(duration != 0f) {
-                    val value = (second*100/duration).toInt()
-//                    Log.d("vietnb", "thoi gian hien tai: $value")
-                    seekBarVideo.progress = value
-                }
-
-            }
-        })
-
-        btnPlay.setOnClickListener{
+        imgPlay.setOnClickListener{
             if(tracker.state == PlayerConstants.PlayerState.PLAYING) {
                 youtubePlayer.pause()
-                btnPlay.text = "Play"
+                imgPlay.setImageResource(R.drawable.play)
             } else {
                 youtubePlayer.play()
-                btnPlay.text = "Pause"
+                imgPlay.setImageResource(R.drawable.pause)
             }
         }
 
-        btnFullScreen.setOnClickListener{
+        imgMute.setOnClickListener{
+            if(valueVolume == 1) {
+                valueVolume = 0
+                imgMute.setImageResource(R.drawable.unmute)
+            } else {
+                valueVolume = 1
+                imgMute.setImageResource(R.drawable.mute)
+            }
+            youtubePlayer.setVolume(valueVolume)
+        }
+
+        imgFullScreen.setOnClickListener{
             if (layoutVideo.parent != null) {
                 (layoutVideo.parent as ViewGroup).removeView(layoutVideo)
             }
@@ -169,6 +238,15 @@ class YoutubeFragment : Fragment() {
         }
 
         return view
+    }
+
+    fun seekTimeVideoWhenSeekBarDragged() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            isDragSeekBar = false
+            Log.d("vietnb", "Nhay vao onStopTrackingTouch")
+            youtubePlayer.play()
+            imgPlay.setImageResource(R.drawable.pause)
+        }, 1000)
     }
 
     companion object {

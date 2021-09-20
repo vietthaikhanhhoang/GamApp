@@ -1,6 +1,7 @@
 package com.customadapter
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.api.Global
+import com.barservicegam.app.MainActivity
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
-import com.customview.ExoVideo
+import com.customview.BVPlayerVideo
 import com.khaolok.myloadmoreitem.Constant
 import com.khaolok.myloadmoreitem.RecyclerViewPositionHelper
+import com.lib.Utils
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -20,14 +24,14 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     var positionVideoPlay: Int = -1
     lateinit  var rclView:RecyclerView
     lateinit  var mList:JSONArray
-    lateinit var exoView: ExoVideo
+    lateinit var bvPlayerVideo: BVPlayerVideo
 
     constructor(context: Context, mList: JSONArray, rclView: RecyclerView): this(context) {
         this.mList = mList
 
 //        positionVideoPlay = 1
         this.rclView = rclView
-        this.exoView = ExoVideo(this.context!!)
+        this.bvPlayerVideo = BVPlayerVideo(this.context!!)
 
         rclView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -67,23 +71,38 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
         var imgPlay: ImageView = itemView!!.findViewById(R.id.imgPlay)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
         var layoutVideo: ConstraintLayout = itemView!!.findViewById(R.id.layoutVideo)
+        var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
+
+        var imgShare: ImageView = itemView!!.findViewById(R.id.imgShare)
+        var txtComment: TextView = itemView!!.findViewById(R.id.txtComment)
+        var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)
+
+        init {
+            val typefaceTitle = Typeface.createFromAsset(txtTitle.getContext().assets, "fonts/sfuidisplaysemibold.ttf")
+            txtTitle.setTypeface(typefaceTitle)
+            txtTitle.setTextColor(txtTitle.getResources().getColor(R.color.titlenewscolor, null))
+
+            val typefaceDesc = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaymedium.ttf")
+            txtDesc.setTypeface(typefaceDesc)
+            txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.descnewscolor, null))
+        }
 
         fun bindData(video: JSONObject, position: Int) {
 
-            if(this.layoutVideo.findViewWithTag<ExoVideo>(100) != null) {
-                val btnExtra = this.layoutVideo.findViewWithTag<ExoVideo>(100)
+            if(this.layoutVideo.findViewWithTag<BVPlayerVideo>(100) != null) {
+                val btnExtra = this.layoutVideo.findViewWithTag<BVPlayerVideo>(100)
                 if (btnExtra.parent != null) {
                     (btnExtra.parent as ViewGroup).removeView(btnExtra)
                 }
             }
 
             if(positionVideoPlay == position) {
-                exoView.tag = 100
-                exoView.layoutParams = ConstraintLayout.LayoutParams(
+                bvPlayerVideo.tag = 100
+                bvPlayerVideo.layoutParams = ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT
                 )
-                this.layoutVideo.addView(exoView)
+                this.layoutVideo.addView(bvPlayerVideo)
             }
 
             if(video.has("title")) {
@@ -108,9 +127,37 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
                     .into(this.imgWebsite)
             }
 
+            var nameWebsite = ""
+            if(video.has("sid")) {
+                val sid = video.getInt("sid")
+                nameWebsite = Global.getNameWebsite(sid, this.txtDesc.context)
+            }
+            this.txtDesc.text = nameWebsite
+
             this.imgCover.setOnClickListener{
                 if(positionVideoPlay != position) {
                     showVideoPosition(position)
+                }
+            }
+
+            this.imgShare.setOnClickListener {
+                val topActivity = Utils.getActivity(this.imgShare.context)
+                if(topActivity is MainActivity) {
+                    if(video.has("fplayurl")) {
+                        val fplayurl = video.getString("fplayurl")
+                        topActivity.shareVideo(fplayurl)
+                    }
+                }
+            }
+
+            imgComment.visibility = View.INVISIBLE
+            txtComment.visibility = View.INVISIBLE
+            if(video.has("sizeCmt")) {
+                val sizeCmt = video.getInt("sizeCmt")
+                if(sizeCmt > 0) {
+                    txtComment.text = sizeCmt.toString()
+                    imgComment.visibility = View.VISIBLE
+                    txtComment.visibility = View.VISIBLE
                 }
             }
         }
@@ -171,8 +218,8 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     }
 
     fun showVideoPosition(position: Int) {
-        if (exoView.parent != null) {
-            (exoView.parent as ViewGroup).removeView(exoView)
+        if (bvPlayerVideo.parent != null) {
+            (bvPlayerVideo.parent as ViewGroup).removeView(bvPlayerVideo)
         }
 
         Log.d("vietnb", "position luc nay: $position")
@@ -192,13 +239,13 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
             }
         }
 
-        exoView.setUrlVideo(urlVideo)
+        bvPlayerVideo.loadVideo(urlVideo)
         notifyItemChanged(position)
     }
 
     fun addData(array: JSONArray) {
-        if (exoView.parent != null) {
-            (exoView.parent as ViewGroup).removeView(exoView)
+        if (bvPlayerVideo.parent != null) {
+            (bvPlayerVideo.parent as ViewGroup).removeView(bvPlayerVideo)
         }
 
         val positionStart = mList.length()
@@ -237,20 +284,20 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     }
 
     fun pauseVideo() {
-        if(exoView != null) {
-            exoView.pauseVideo()
+        if(bvPlayerVideo != null) {
+            bvPlayerVideo.pauseVideo()
         }
     }
 
     fun playVideo() {
-        if(exoView != null) {
-            exoView.playVideo()
+        if(bvPlayerVideo != null) {
+            bvPlayerVideo.playVideo()
         }
     }
 
     fun readyVideo(isReady: Boolean) {
-        if(exoView != null) {
-            exoView.readyVideo(isReady)
-        }
+//        if(bvPlayerVideo != null) {
+//            bvPlayerVideo.readyVideo(isReady)
+//        }
     }
 }

@@ -10,15 +10,21 @@ import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.TranslateAnimation
 import android.widget.ImageView
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
 import com.barservicegam.app.MainActivity
 import com.barservicegam.app.R
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
@@ -30,7 +36,9 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.lib.Utils
 import com.lib.eventbus.EventBusFire
+import com.lib.toDp
 import com.lib.toPx
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -43,19 +51,72 @@ class ExoVideo @JvmOverloads constructor(
 ) :
     ConstraintLayout(context, attrs, defStyleAttr) {
 
+    ///tracking currentTime:
+    val updateHandler = Handler(Looper.getMainLooper())
+    val runnable = Runnable {
+        trackingCurrentTimeVideo()
+    }
+
+    private fun trackingCurrentTimeVideo() {
+//        Log.d("vietnb", "Nhay vao onStopTrackingTouch")
+        if(playerView.player != null) {
+            var currentTime:Long = playerView.player!!.currentPosition/1000
+            var durationTime:Long = playerView.player!!.duration/1000
+
+            txtTime.text = "00:00 / 00:00"
+
+            if(durationTime > 0) {
+                val textcurrent = String.format("%02d:%02d", (currentTime / 60).toInt(),((currentTime % 60)).toInt())
+                val textduration = String.format("%02d:%02d", (durationTime / 60).toInt(),((durationTime % 60)).toInt())
+
+                txtTime.text = textcurrent + " / " + textduration
+                //txtTime.text = currentTime.toString() + "/" + durationTime.toString()
+
+                val value:Float = (currentTime*1f/durationTime).toFloat()
+//                Log.d("vietnb", "current: $currentTime")
+//                Log.d("vietnb", "duration: $durationTime")
+//
+//                Log.d("vietnb", "value gia tri :: " + (value*100).toInt().toString())
+
+                seekBarVideo.progress = (value*100).toInt()
+            }
+
+            updateHandler.postDelayed(runnable, 1000)
+        }
+    }
+
+    val menuHandler = Handler(Looper.getMainLooper())
+    val menuRunable = Runnable {
+        downMenu(200)
+    }
+
+    var isVideoEnd:Boolean = false
+
+    var secondTime:Int = 0
+    lateinit var txtTime: TextView
     lateinit var playerView: PlayerView
+    lateinit var seekBarVideo: SeekBar
 
     lateinit  var imgPlay: ImageView
+    lateinit  var layoutPlay: ConstraintLayout
+
     lateinit  var imgVolume: ImageView
-    lateinit  var imgFullscreen: ImageView
+    lateinit  var layoutVolume: ConstraintLayout
+
+    lateinit  var imgFullScreen: ImageView
+    lateinit  var layoutFullScreen: ConstraintLayout
 
     lateinit var layoutVideo: ConstraintLayout
-    lateinit var layoutControl: ConstraintLayout
+    lateinit var layoutMenu: ConstraintLayout
+    lateinit var layoutMenuChild: ConstraintLayout
+
+    var isShowMenu:Boolean = false
 
     var isFullScreen:Boolean = false
     lateinit var layoutParent: ConstraintLayout
+    lateinit var txtInteractVideo:TextView
 
-    var showingControlVideo:Boolean = true
+    var isDragSeekBar = false
 
     ////listener
     interface VideoFragmentListener {
@@ -68,46 +129,11 @@ class ExoVideo @JvmOverloads constructor(
         this.listener = listener
     }
 
-    fun playYoutubeVideo(youtubeUrl: String) {
-        if(playerView.player != null) {
-            playerView.player!!.stop()
-        }
-        Toast.makeText(this@ExoVideo.context, "Định dạng youtube $youtubeUrl", Toast.LENGTH_SHORT).show()
+    fun loadVideo(urlVideo: String) {
+        resetVideo()
 
-        val videoPlayer = SimpleExoPlayer.Builder(this.context).build()
-        playerView.player = videoPlayer
-
-        object : YouTubeExtractor(this.context) {
-            override fun onExtractionComplete(
-                ytFiles: SparseArray<YtFile>?,
-                videoMeta: VideoMeta?
-            ) {
-                if(ytFiles != null) {
-                    val videoTag = 137
-                    val audioTag = 140
-                    val audioSource = ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory()).createMediaSource(
-                        MediaItem.fromUri(ytFiles.get(audioTag).url))
-                    val videoSource = ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory()).createMediaSource(
-                        MediaItem.fromUri(ytFiles.get(videoTag).url))
-                    val videoPlayer = SimpleExoPlayer.Builder(this@ExoVideo.context).build()
-                    videoPlayer.setMediaSource(MergingMediaSource(true, videoSource, audioSource), true)
-                    playerView.player = videoPlayer
-                    playerView.player!!.prepare()
-                    playerView.player!!.play()
-                    //playerView.player.seekTo()
-                    Toast.makeText(this@ExoVideo.context, "Định dạng youtube $youtubeUrl", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }.extract(youtubeUrl, false, true)
-
-    }
-
-    fun setUrlVideo(urlVideo: String) {
-
-        if(!urlVideo.contains("youtube")) {
-            playYoutubeVideo("https://www.youtube.com/watch?v=8MLa-Lh8lkU")
-            return
-        }
+        updateHandler.removeCallbacks(runnable)
+        downMenu(0)
 
 //        urlVideo = ""
         //urlVideo = "https://media.tinmoi24.vn/24h/upload/3-2021/videoclip/2021-07-05/1625467769-sr16_jasspers1.m3u8"
@@ -151,6 +177,49 @@ class ExoVideo @JvmOverloads constructor(
 
         if(urlVideo.contains("mp4") || urlVideo.contains("m3u8") || urlVideo.contains("youtube")) {
             videoPlayer.setMediaSource(mediaSource!!)
+
+            videoPlayer.addListener(object: Player.EventListener {
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if(isPlaying) {
+                        Log.d("vietnb", "video playing")
+                        updateHandler.postDelayed(runnable, 1000)
+                    } else {
+                        Log.d("vietnb", "video pause")
+                        updateHandler.removeCallbacks(runnable)
+                    }
+                }
+
+                override fun onPlaybackStateChanged(state: Int) {
+                    super.onPlaybackStateChanged(state)
+                    isVideoEnd = false
+                    when (state) {
+                        Player.STATE_IDLE -> {
+                            Log.d("vietnb", "onPlayerStateChanged: STATE_IDLE")
+                        }
+                        Player.STATE_BUFFERING -> {
+                            Log.d("vietnb", "onPlayerStateChanged: STATE_BUFFERING")
+                        }
+                        Player.STATE_READY -> {
+                            Log.d("vietnb", "onPlayerStateChanged: STATE_READY")
+                        }
+                        Player.STATE_ENDED -> {
+                            Log.d("vietnb", "onPlayerStateChanged: STATE_ENDED")
+
+                            isVideoEnd = true
+                            menuHandler.removeCallbacks(menuRunable)
+                            imgPlay.setImageResource(R.drawable.replay)
+                            upMenu()
+                            //Toast.makeText(context, "Ket thuc video", Toast.LENGTH_SHORT).show()
+                            var secondduration = playerView.player!!.duration/1000
+                            val textduration = String.format("%02d:%02d", (secondduration / 60).toInt(),((secondduration % 60)).toInt())
+                            txtTime.text = textduration + "/" + textduration
+                        }
+                    }
+                }
+            })
+
             playerView.player = videoPlayer
             videoPlayer.prepare()
             videoPlayer.play()
@@ -183,31 +252,51 @@ class ExoVideo @JvmOverloads constructor(
         val view = View.inflate(context, R.layout.fragment_video, this)
         layoutParent = view.findViewById(R.id.layoutParent)
         layoutVideo = view.findViewById(R.id.layoutVideo)
-        layoutControl = view.findViewById(R.id.layoutControl)
+        layoutMenu = view.findViewById(R.id.layoutMenu)
+        layoutMenuChild = view.findViewById(R.id.layoutMenuChild)
         playerView = view.findViewById(R.id.playerView)
+
         imgPlay = view.findViewById(R.id.imgPlay)
+        layoutPlay = view.findViewById(R.id.layoutPlay)
+
         imgVolume = view.findViewById(R.id.imgVolume)
-        imgFullscreen = view.findViewById(R.id.imgFullscreen)
+        layoutVolume = view.findViewById(R.id.layoutVolume)
+
+        imgFullScreen = view.findViewById(R.id.imgFullScreen)
+        layoutFullScreen = view.findViewById(R.id.layoutFullScreen)
+
+        txtTime = view.findViewById(R.id.txtTime)
+        seekBarVideo = view.findViewById(R.id.seekBarVideo)
+        txtInteractVideo = view.findViewById(R.id.txtInteractVideo)
 
         bindDataLayout()
     }
 
-    fun bindDataLayout() {
-        layoutParent.setOnClickListener{
-            if(showingControlVideo) {
-                layoutControl.visibility = View.INVISIBLE
-            } else {
-                layoutControl.visibility = View.VISIBLE
+    private fun bindDataLayout() {
+        txtInteractVideo.setOnClickListener{
+            menuHandler.removeCallbacks(menuRunable)
+            if(isShowMenu) {
+                downMenu(200)
+            } else
+            {
+                upMenu()
+                menuHandler.postDelayed(menuRunable, 6000)
             }
-            showingControlVideo = !showingControlVideo
         }
 
         playerView.useController = false
 
-        imgPlay.setOnClickListener {
+        layoutPlay.setOnClickListener {
             if(playerView.player != null) {
                 if(!playerView.player!!.isPlaying) {
-                    playerView.player!!.play()
+
+                    if(isVideoEnd) {
+                        //truong hop endvideo va replay
+                        playerView.player!!.seekTo(0)
+                        menuHandler.postDelayed(menuRunable, 0)
+                    } else {
+                        playerView.player!!.play()
+                    }
                     imgPlay.setImageResource(R.drawable.pause)
                 } else {
                     playerView.player!!.pause()
@@ -216,24 +305,24 @@ class ExoVideo @JvmOverloads constructor(
             }
         }
 
-        imgVolume.setOnClickListener {
-//            if(playerView.player != null) {
-//                val volume = playerView.player!!.volume
-//                Log.d("vietnb", "volume: $volume")
-//
-//                if(playerView.player!!.volume == 1.0f) {
-//                    playerView.player!!.volume = 0.0f
-//                    imgVolume.setImageResource(R.drawable.mute)
-//                } else {
-//                    playerView.player!!.volume = 1.0f
-//                    imgVolume.setImageResource(R.drawable.unmute)
-//                }
-//            }
+        layoutVolume.setOnClickListener {
+            if(playerView.player != null) {
+                val volume = playerView.player!!.audioComponent?.volume
+                Log.d("vietnb", "volume: $volume")
+
+                if(volume == 1.0f) {
+                    playerView.player!!.audioComponent?.volume = 0.0f
+                    imgVolume.setImageResource(R.drawable.mute)
+                } else {
+                    playerView.player!!.audioComponent?.volume = 1.0f
+                    imgVolume.setImageResource(R.drawable.unmute)
+                }
+            }
         }
 
 //        val heightStatus = Utils.getStatusBarHeight(this.requireContext())
 
-        imgFullscreen.setOnClickListener{
+        layoutFullScreen.setOnClickListener{
 
             if (layoutVideo.parent != null) {
                 (layoutVideo.parent as ViewGroup).removeView(layoutVideo)
@@ -275,6 +364,55 @@ class ExoVideo @JvmOverloads constructor(
             }
             isFullScreen = !isFullScreen
         }
+
+        this.seekBarVideo.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                Log.d("vietnb", "chay vao changed seekBar")
+                if(playerView.player != null && isDragSeekBar) {
+                    if(playerView.player!!.isPlaying) {
+                        playerView.player!!.pause()
+                    }
+
+                    playerView.player!!.seekTo((progress*playerView.player!!.duration)/100)
+
+                    var secondcurrent = (progress*playerView.player!!.currentPosition/1000)/100
+
+                    var secondduration = playerView.player!!.duration/1000
+
+                    val textcurrent = String.format("%02d:%02d", (secondcurrent / 60).toInt(),((secondcurrent % 60)).toInt())
+                    val textduration = String.format("%02d:%02d", (secondduration / 60).toInt(),((secondduration % 60)).toInt())
+                    txtTime.text = textcurrent + "/" + textduration
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isDragSeekBar = true
+                menuHandler.removeCallbacks(menuRunable)
+                Log.d("vietnb", "Nhay vao onStartTrackingTouch")
+                if(playerView.player != null) {
+                    playerView.player!!.pause()
+                }
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if(isDragSeekBar) {
+                    seekTimeVideoWhenSeekBarDragged()
+                    menuHandler.postDelayed(runnable, 6000)
+                }
+                isDragSeekBar = false
+            }
+        })
+    }
+
+    fun seekTimeVideoWhenSeekBarDragged() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            if(playerView.player != null) {
+                Log.d("vietnb", "Nhay vao onStopTrackingTouch")
+                playerView.player!!.play()
+                imgPlay.setImageResource(R.drawable.pause)
+            }
+        }, 1000)
     }
 
     fun pauseVideo(){
@@ -311,5 +449,64 @@ class ExoVideo @JvmOverloads constructor(
                 playerView.player!!.playWhenReady = isReady
             }
         }
+    }
+
+    private fun upMenu(){
+        val height = layoutMenu.layoutParams.height.toDp().toFloat() + 20
+
+        Handler(Looper.getMainLooper()).post {
+            layoutPlay.visibility = View.VISIBLE
+        }
+
+        isShowMenu = true
+        val animation = TranslateAnimation(
+            .0f, 0.0f,
+            height, 0.0f
+        ) //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)
+
+        animation.fillAfter = true
+
+        animation.duration = 200 // animation duration
+        layoutMenu.startAnimation(animation);  // start animation
+    }
+
+    private fun downMenu(duration: Long) {
+        val height = layoutMenu.layoutParams.height.toDp().toFloat() + 20
+
+        Handler(Looper.getMainLooper()).post {
+            layoutPlay.visibility = View.INVISIBLE
+        }
+
+        isShowMenu = false
+        val animation = TranslateAnimation(
+            0.0f, 0.0f,
+            0.0f, height
+        ) //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)
+
+        animation.setFillAfter(true)
+
+        animation.duration = 200 // animation duration
+        layoutMenu.startAnimation(animation);  // start animation
+    }
+
+    private fun resetVideo() {
+        seekBarVideo.progress = 0
+
+        val textcurrent = "00:00"
+        var textduration = "00:00"
+
+        if(playerView.player != null) {
+            var currentTime: Long = playerView.player!!.currentPosition / 1000
+            var durationTime: Long = playerView.player!!.duration / 1000
+            if (durationTime > 0) {
+                textduration = String.format(
+                    "%02d:%02d",
+                    (durationTime / 60).toInt(),
+                    ((durationTime % 60)).toInt()
+                )
+            }
+        }
+
+        txtTime.text = textcurrent + " / " + textduration
     }
 }

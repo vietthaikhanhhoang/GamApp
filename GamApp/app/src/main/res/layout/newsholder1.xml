@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="120dp">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutP"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="120dp">
 
         <TextView
             android:id="@+id/txtTitle"
@@ -36,10 +36,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/CornerImageHome"
                 android:id="@+id/imgCover"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -61,16 +61,36 @@
 
         <TextView
             android:id="@+id/txtDesc"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginBottom="10dp"
             android:gravity="top"
             android:maxLines="2"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/layoutCover" />
+
+        <ImageView
+            android:id="@+id/imgComment"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="4dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/commentnews"
+            app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
+            app:layout_constraintStart_toEndOf="@+id/txtDesc"
+            app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/viewLine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

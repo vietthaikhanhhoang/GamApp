@@ -16,6 +16,8 @@ import com.fragula.extensions.addFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import data.DataPreference
+import data.PREFERENCE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +49,6 @@ class VideoCollectionAdapter(fragment: Fragment, var arrCategory: JSONArray) : F
     override fun getItemCount(): Int = arrCategory.length()
 
     override fun createFragment(position: Int): Fragment {
-
         // Return a NEW fragment instance in createFragment(int)
         val fragment = ListVideoFragment.newInstance("", "", arrCategory[position].toString())
 //        fragment.arguments = Bundle().apply {
@@ -84,12 +85,29 @@ class VideoPagerFragment : Fragment() {
         tab_layout = view.findViewById(R.id.tab_layout)
         viewPager = view.findViewById(R.id.viewPager)
 
+        tab_layout.setTabTextColors(getResources().getColor(R.color.titlenewscolor, null), getResources().getColor(R.color.mainredcolor, null))
+        tab_layout.setSelectedTabIndicatorColor(getResources().getColor(R.color.mainredcolor, null))
+
         getCategoryVideo()
 
         return view
     }
 
-    fun getCategoryVideo() {
+    private fun getCategoryVideo() {
+
+        val sharedPreference: DataPreference = DataPreference(requireContext())
+        val arrayCategoryVideo = sharedPreference.getValueString(PREFERENCE.ARRAYCATEGORYVIDEO)
+
+        var hasCategoryVideo:Boolean = false
+        if(arrayCategoryVideo != null) {
+            hasCategoryVideo = true
+            val categories = JSONArray(arrayCategoryVideo)
+            val videoCollectionAdapter = VideoCollectionAdapter(this@VideoPagerFragment, categories)
+            viewPager.adapter = videoCollectionAdapter
+            tab_layout.setupWithViewPager(viewPager, categories!!)
+            viewPager.offscreenPageLimit = 1
+        }
+
         val retrofit:APIService = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://api.appnews24h.com")
@@ -110,11 +128,13 @@ class VideoPagerFragment : Fragment() {
                     )
 
                     val jsonObject = JSONObject(prettyJson)
-                    if(jsonObject != null)
+                    if (jsonObject.has("categories"))
                     {
-                        if (jsonObject.has("categories"))
-                        {
-                            val categories = jsonObject.getJSONArray("categories")
+                        val categories = jsonObject.getJSONArray("categories")
+                        val sharedPreference: DataPreference = DataPreference(requireContext())
+                        sharedPreference.save(PREFERENCE.ARRAYCATEGORYVIDEO, categories.toString())
+
+                        if(!hasCategoryVideo) {
                             val videoCollectionAdapter = VideoCollectionAdapter(this@VideoPagerFragment, categories)
                             viewPager.adapter = videoCollectionAdapter
                             tab_layout.setupWithViewPager(viewPager, categories!!)

@@ -17,6 +17,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import data.DataPreference
+import data.PREFERENCE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Retrofit
+import java.util.prefs.Preferences
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,6 +84,10 @@ class HomePagerFragment : Fragment(), OnFragmentNavigatorListener {
         val view = inflater.inflate(R.layout.fragment_home_pager, container, false)
 
         tab_layout = view.findViewById(R.id.tab_layout)
+        tab_layout.setTabTextColors(getResources().getColor(R.color.titlenewscolor, null), getResources().getColor(R.color.mainredcolor, null))
+        tab_layout.setSelectedTabIndicatorColor(getResources().getColor(R.color.mainredcolor, null))
+//        tab_layout.setBackgroundResource(R.color.white)
+
         viewPager = view.findViewById(R.id.viewPager)
 
         getCategory()
@@ -88,19 +95,27 @@ class HomePagerFragment : Fragment(), OnFragmentNavigatorListener {
         return view
     }
 
-    fun getCategory() {
+    private fun getCategory() {
+        val sharedPreference:DataPreference = DataPreference(requireContext())
+        val arrayCategoryHot = sharedPreference.getValueString(PREFERENCE.ARRAYCATEGORYHOT)
+
+        var hasCategoryHot:Boolean = false
+        if(arrayCategoryHot != null) {
+            hasCategoryHot = true
+            arrCategory = JSONArray(arrayCategoryHot)
+            homeCollectionAdapter = HomeCollectionAdapter(this, arrCategory!!)
+            viewPager.adapter = homeCollectionAdapter
+            tab_layout.setupWithViewPager(viewPager, arrCategory!!)
+            viewPager.offscreenPageLimit = 1
+            //Log.d("vietnb", "kiem tra da $arrCategory")
+        }
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.appnews24h.com")
             .build()
 
         val service = retrofit.create(APIService::class.java)
 
-//        arrCategory = JSONArray()
-//        for (i in 0 until 5) {
-//            val objc = JSONObject("{'name' : 'hay qua'}")
-//            arrCategory!!.put(objc)
-//        }
-        var __this = this
         CoroutineScope(Dispatchers.IO).launch {
             val response = service.getCategory(Global.getHeaderMap())
 
@@ -123,32 +138,18 @@ class HomePagerFragment : Fragment(), OnFragmentNavigatorListener {
                             //Log.d("Pretty Printed JSON :", "hay vao day")
                             if (jsonObject.getJSONArray("websites") != null)
                             {
-                                var websiteTinMoi:JSONObject? = null
                                 val websites = jsonObject.getJSONArray("websites")
-                                Global.arrayWebsite = websites
+                                analyzeWebsite(websites)
 
-                                for (i in 0 until websites.length()) {
-                                    val website = JSONObject(websites[i].toString())
-                                    if(website.has("id")) {
-                                        if (website["id"] == 999) {
-                                            websiteTinMoi = website
-                                            break
-                                        }
-                                    }
+                                val sharedPreference:DataPreference = DataPreference(requireContext())
+                                val arrayCategoryHot = sharedPreference.getValueString(PREFERENCE.ARRAYCATEGORYHOT)!!
+                                if(arrayCategoryHot.isNotEmpty() && !hasCategoryHot) {
+                                    arrCategory = JSONArray(arrayCategoryHot)
+                                    homeCollectionAdapter = HomeCollectionAdapter(this@HomePagerFragment, arrCategory!!)
+                                    viewPager.adapter = homeCollectionAdapter
+                                    tab_layout.setupWithViewPager(viewPager, arrCategory!!)
+                                    viewPager.offscreenPageLimit = 1
                                 }
-
-                                if(websiteTinMoi != null) {
-                                    if(websiteTinMoi.has("categorys")) {
-                                        val categorys = websiteTinMoi.getJSONArray("categorys")
-
-                                        arrCategory = categorys
-                                        homeCollectionAdapter = HomeCollectionAdapter(__this, arrCategory!!)
-                                        viewPager.adapter = homeCollectionAdapter
-                                        tab_layout.setupWithViewPager(viewPager, arrCategory!!)
-                                        viewPager.offscreenPageLimit = 1
-                                    }
-                                }
-
                             }
                         }
                     }
@@ -158,6 +159,74 @@ class HomePagerFragment : Fragment(), OnFragmentNavigatorListener {
                 }
             }
         }
+    }
+
+    fun analyzeWebsite(arrWebsite: JSONArray){
+        val mapIdNameWebsite = mutableMapOf<Int, String>()
+
+        val arrDictIdWebsite_Category = mutableMapOf<Int, JSONArray>()
+        val arrayNameWebsite = JSONArray()
+
+        for (i in 0 until arrWebsite.length()) {
+            val category = arrWebsite.getJSONObject(i)
+
+            val id = category.getInt("id")
+            val categorys = category.getJSONArray("categorys")
+            arrDictIdWebsite_Category[id] = categorys
+
+            arrayNameWebsite.put(category)
+
+            val name = category.getString("name")
+            mapIdNameWebsite.put(id, name)
+
+//            Log.d("vietnb", "dang kiem tra id: $id || name: $name")
+        }
+
+        val sharedPreference:DataPreference = DataPreference(requireContext())
+
+        sharedPreference.save(PREFERENCE.MAPIDNAMEWEBSITE, mapIdNameWebsite) ///999:Tin
+
+        sharedPreference.save(PREFERENCE.ARRAYNAMEWEBSITE, arrayNameWebsite.toString())
+
+        sharedPreference.save(PREFERENCE.ARRAYDICTWIDCATEGORY, arrDictIdWebsite_Category.toString())
+
+        val arrayNameWebsitesVSNameCategory = mutableMapOf<Int, Map<Int, String>>()
+        for (i in 0 until arrWebsite.length()) {
+            val category = arrWebsite.getJSONObject(i)
+
+            val id = category.getInt("id")
+            val arrayCategory = category.getJSONArray("categorys")
+
+            val arrayNameCategory = mutableMapOf<Int, String>()
+
+            for(j in 0 until arrayCategory.length()) {
+                val dictData = arrayCategory.getJSONObject(j)
+                val name = dictData.getString("name")
+                val id = dictData.getInt("id")
+                arrayNameCategory[id] = name
+            }
+
+            arrayNameWebsitesVSNameCategory[id] = arrayNameCategory
+//            Log.d("vietnb", "luu xong")
+        }
+        sharedPreference.save(PREFERENCE.ARRAYWEBSITETOPIC, arrayNameWebsitesVSNameCategory.toString())
+
+        val arrCategoryHot = JSONArray()
+        for (i in 0 until arrWebsite.length()) {
+            val category = arrWebsite.getJSONObject(i)
+            val id = category.getInt("id")
+            if(id == 999) {
+                val arrayCategory = category.getJSONArray("categorys")
+                for (j in 0 until arrayCategory.length()) {
+                    val dictData = arrayCategory.getJSONObject(j)
+                    val show = dictData.getInt("show")
+                    if(show == 1) {
+                        arrCategoryHot.put(dictData)
+                    }
+                }
+            }
+        }
+        sharedPreference.save(PREFERENCE.ARRAYCATEGORYHOT, arrCategoryHot.toString())
     }
 
     companion object {

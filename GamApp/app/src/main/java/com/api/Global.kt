@@ -1,9 +1,14 @@
 package com.api
 
+import android.content.Context
 import android.util.Log
+import com.bumptech.glide.util.Util
+import data.DataPreference
+import data.PREFERENCE
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.HashMap
 
 object Global {
     init {
@@ -71,7 +76,7 @@ object Global {
     fun getHeaderMap(): Map<String, String> {
         val headerMap = mutableMapOf<String, String>()
         headerMap["device_id"] = "0ef50568-d402-472f-994e-bea239532a90"
-        headerMap["APP_VERSION"] = "1.0.87"
+        headerMap["APP_VERSION"] = "1.0.89"
         headerMap["APP_ID"] = "tinhay"
         headerMap["TOKEN"] = "8cd7ac6bebe1255d96ee4353339b4641"
         headerMap["Content-Type"] = "application/json; charset=UTF-8"
@@ -80,57 +85,68 @@ object Global {
 
     lateinit var arrayWebsite: JSONArray
 
-    fun getNameWebsite(websiteID: Int) : String {
+    fun getNameWebsite(websiteID: Int, context: Context) : String {
         var name = "Tin Mới 24h"
-        if(arrayWebsite?.length() > 0) {
-            for (i in 0 until arrayWebsite?.length()) {
-                val website = JSONObject(arrayWebsite[i].toString())
-                if(website.has("id")) {
-                    val id = website["id"]
-                    if(id == websiteID) {
-                        if(website.has("name")) {
-                            name =  website.getString("name")
-                            break
-                        }
-                    }
-                }
-            }
+        val sharedPreference: DataPreference = DataPreference(context)
+        var mapIDNameWebsite = sharedPreference.getValueMap(PREFERENCE.MAPIDNAMEWEBSITE)
+        if(mapIDNameWebsite.containsKey(websiteID)) {
+            return mapIDNameWebsite?.get(websiteID).toString()
         }
+
+//        if(arrayWebsite != null) {
+//            if(arrayWebsite?.length() > 0) {
+//                for (i in 0 until arrayWebsite?.length()) {
+//                    val website = JSONObject(arrayWebsite[i].toString())
+//                    if(website.has("id")) {
+//                        val id = website["id"]
+//                        if(id == websiteID) {
+//                            if(website.has("name")) {
+//                                name =  website.getString("name")
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return name
     }
 
     fun getNameCategory(websiteID: Int, categoryID: Int) : String {
         var name = "Tổng hợp"
-        if(arrayWebsite?.length() > 0) {
-            for (i in 0 until arrayWebsite?.length()) {
-                val website = JSONObject(arrayWebsite[i].toString())
-                if(website.has("id")) {
-                    val id = website["id"]
-                    if(id == websiteID) {
-                        if(website.has("name")) {
-                            if(website.has("categorys")) {
-                                val categorys =  website.getJSONArray("categorys")
-                                for (j in 0 until categorys.length()) {
-                                    val category = JSONObject(categorys[j].toString())
-                                    if(category.has("id")) {
-                                        val catid = category.getInt("id")
-                                        if(catid == categoryID) {
-                                            if(category.has("name")) {
-                                                name = category.getString("name")
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-                            }
 
-                            break
-                        }
-                    }
-                }
-            }
-        }
+//        if(arrayWebsite != null) {
+//            if(arrayWebsite?.length() > 0) {
+//                for (i in 0 until arrayWebsite?.length()) {
+//                    val website = JSONObject(arrayWebsite[i].toString())
+//                    if(website.has("id")) {
+//                        val id = website["id"]
+//                        if(id == websiteID) {
+//                            if(website.has("name")) {
+//                                if(website.has("categorys")) {
+//                                    val categorys =  website.getJSONArray("categorys")
+//                                    for (j in 0 until categorys.length()) {
+//                                        val category = JSONObject(categorys[j].toString())
+//                                        if(category.has("id")) {
+//                                            val catid = category.getInt("id")
+//                                            if(catid == categoryID) {
+//                                                if(category.has("name")) {
+//                                                    name = category.getString("name")
+//                                                    break
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return name
     }

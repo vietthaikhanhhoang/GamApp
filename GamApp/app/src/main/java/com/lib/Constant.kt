@@ -5,6 +5,8 @@ object Constant {
     const val VIEW_TYPE_LOADING = 1
     const val VIEW_TYPE_NONE = 2
     const val VIEW_TYPE_VIDEO = 3
+    const val VIEW_TYPE_ITEM_LARGE = 4
+    const val VIEW_TYPE_ITEM_THREE = 5
 }
 
 object DetailView {

@@ -38,7 +38,7 @@ interface APIService {
     suspend fun postBetting(@HeaderMap headers: Map<String, String>, @Body requestBody: RequestBody) : Response<ResponseBody>
 
     @GET("/news/v2.0/video/getallV2?count=15&json=1")
-    fun getListVideos(@Query("subcid") subcid: Int?, @Query("realsize") realsize: Int?, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
+    fun getListVideos(@Query("subcid") subcid: Int?, @Query("lid") lid: String?, @Query("realsize") realsize: Int?, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
     @GET("/news/v2.0/video/getvideocategoriesV2")
     fun getCategoryVideo(@HeaderMap headers: Map<String, String>) : Call<ResponseBody>

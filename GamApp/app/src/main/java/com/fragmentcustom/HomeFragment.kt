@@ -129,12 +129,10 @@ class HomeFragment : Fragment() {
                                 val linfos = jsonObject.getJSONArray("linfos")
                                 for (i in 0 until linfos.length()) {
                                     val infos = JSONObject(linfos[i].toString())
-                                    if(infos.has("Doc")) {
-                                        val doc = JSONObject(infos.get("Doc").toString())
-                                        if(doc.has("Art")) {
-                                            val art = JSONObject(doc.get("Art").toString())
-//                                            Log.d("vietnb","art: " + art.toString())
-                                            arrNews.put(art)
+                                    if(infos.has("type")) {
+                                        val type = infos.getInt("type")
+                                        if(type == 1) { //dang bai bao art
+                                            arrNews.put(infos)
                                         }
                                     }
                                 }
@@ -147,10 +145,14 @@ class HomeFragment : Fragment() {
                                             categoryname = categoryJSON.getString("name")
                                         }
 
+                                        val jObject = JSONObject(arrNews[position].toString())
+                                        val doc = jObject.getJSONObject("Doc")
+                                        val art = doc.getJSONObject("Art")
+
                                         addFragment<DetailNewsFragment> {
                                             ARG_PARAM1 to ""
                                             ARG_PARAM2 to ""
-                                            ARG_PARAM3 to arrNews[position].toString()
+                                            ARG_PARAM3 to art.toString()
                                             ARG_PARAM4 to categoryname
                                         }
                                     }
@@ -174,7 +176,10 @@ class HomeFragment : Fragment() {
     private fun LoadMoreData() {
 
         Log.d("tag2", "tien hanh loadmore")
-        val lid = JSONObject(arrNews[arrNews.length() - 1].toString())["lid"].toString()
+        val jObject = JSONObject(arrNews[arrNews.length() - 1].toString())
+        val doc = jObject.getJSONObject("Doc")
+        val art = doc.getJSONObject("Art")
+        val lid = art.getString("lid")
         listNewsAdapter.addLoadingView()
 
         val retrofit:APIService = Retrofit.Builder()
@@ -218,12 +223,10 @@ class HomeFragment : Fragment() {
                                 val arrNewsMore = JSONArray()
                                 for (i in 0 until linfos.length()) {
                                     val infos = JSONObject(linfos[i].toString())
-                                    if(infos.has("Doc")) {
-                                        val doc = JSONObject(infos.get("Doc").toString())
-                                        if(doc.has("Art")) {
-                                            val art = JSONObject(doc.get("Art").toString())
-                                            arrNewsMore.put(art)
-                                            arrNews.put(art)
+                                    if(infos.has("type")) {
+                                        val type = infos.getInt("type")
+                                        if(type == 1) { //dang bai bao art
+                                            arrNews.put(infos)
                                         }
                                     }
                                 }

@@ -9,4 +9,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#FFEBEBEB</color>
     <color name="yellow">#FFEB3B</color>
+
+    <color name="viewLine">#EBEBEB</color>
+
+    <color name="titlenewscolor">#444444</color>
+    <color name="descnewscolor">#B1B1B1</color>
+    <color name="mainredcolor">#F93E1F</color>
+
+    <color name="transparent"></color>
+
 </resources>

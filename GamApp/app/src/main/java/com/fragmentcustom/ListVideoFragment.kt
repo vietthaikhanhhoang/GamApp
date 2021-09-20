@@ -44,7 +44,7 @@ class ListVideoFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var category: JSONObject? = null
+    private var category: String? = null
 
     lateinit var rclView: RecyclerView
     lateinit var listVideoAdapter: ListVideoAdapter
@@ -58,10 +58,7 @@ class ListVideoFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
-
-            if(it.getString(ARG_PARAM3) == null) {
-                category = JSONObject(it.getString(ARG_PARAM3))
-            }
+            category = it.getString(ARG_PARAM3)
         }
     }
 
@@ -117,12 +114,14 @@ class ListVideoFragment : Fragment() {
 
         var subcid = 888
         if(category != null) {
-            if(category!!.has("id")) {
-                subcid = category!!.getInt("id")
+            Log.d("vietnb", "kiem tra thang category cua video $category")
+            val categoryJSON = JSONObject(category)
+            if(categoryJSON.has("id")) {
+                subcid = categoryJSON.getInt("id")
             }
         }
 
-        val response = retrofit.getListVideos(subcid, null, Global.getHeaderMap())
+        val response = retrofit.getListVideos(subcid, null,null, Global.getHeaderMap())
         response.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -175,7 +174,7 @@ class ListVideoFragment : Fragment() {
     }
 
     private fun LoadMoreData() {
-        var lid = "0"
+        var lid: String = ""
         var realsize = arrVideos.length()
 
         val jVideo = arrVideos.getJSONObject(arrVideos.length() - 1)
@@ -194,12 +193,13 @@ class ListVideoFragment : Fragment() {
 
         var subcid = 888
         if(category != null) {
-            if(category!!.has("id")) {
-                subcid = category!!.getInt("id")
+            val categoryJSON = JSONObject(category)
+            if(categoryJSON.has("id")) {
+                subcid = categoryJSON.getInt("id")
             }
         }
 
-        val response = retrofit.getListVideos(subcid, realsize, Global.getHeaderMap())
+        val response = retrofit.getListVideos(subcid, lid, realsize, Global.getHeaderMap())
         response.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("vietnb", "successful")
@@ -311,7 +311,7 @@ class ListVideoFragment : Fragment() {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
-                    putString(ARG_PARAM3, param2)
+                    putString(ARG_PARAM3, param3)
                 }
             }
     }

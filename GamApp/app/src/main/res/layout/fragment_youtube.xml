@@ -30,44 +30,82 @@
             app:showFullScreenButton="true"
             app:surface_type="texture_view" >
 
+            <Button
+                android:id="@+id/btnNextVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next Video"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView>
 
-        <Button
-            android:id="@+id/btnPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Play"
-            app:layout_constraintStart_toStartOf="parent"
+        <ImageView
+            android:id="@+id/imgMute"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/unmute"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnFullScreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FullScreen"
-            app:layout_constraintStart_toEndOf="@+id/btnPlay"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txtTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <SeekBar
-            android:min="0"
-            android:max="100"
-            android:progress="0"
-            android:id="@+id/seekBarVideo"
-            android:layout_width="0dp"
-            android:layout_height="5dp"
+        <ImageView
+            android:id="@+id/imgPlay"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/youtube_player_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/youtube_player_view" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/black"
+            android:id="@+id/layoutMenu"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            app:layout_constraintBottom_toBottomOf="@+id/youtube_player_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <SeekBar
+                android:id="@+id/seekBarVideo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:max="100"
+                android:min="0"
+                android:progress="0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imgFullScreen"
+                app:layout_constraintStart_toEndOf="@+id/txtTime"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="00:00"
+                android:textColor="#FAF4F4"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imgFullScreen"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/fullscreen"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

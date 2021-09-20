@@ -22,6 +22,45 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+<!--            https://mobile.tinmoi24.vn/cuong-kich-so-huu-hoa-luc-nhu-loi-than-hung-manh-tren-bau-troi/news-3-21-a6c1cf4c7a8ad56df2200855fedff587-->
+
+            <intent-filter android:label="@string/intent_deeplink">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "https://mobile.tinmoi24.vn/” -->
+                <data android:scheme="https" android:host="mobile.tinmoi24.vn" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+            </intent-filter>
+
+            <intent-filter android:label="@string/intent_deeplink">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "https://mobile.tinmoi24.vn/” -->
+                <data android:scheme="http" android:host="mobile.tinmoi24.vn" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+            </intent-filter>
+
+            <intent-filter android:label="@string/intent_deeplink">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="app"
+                    android:host="mobile.tinmoi24.vn" />
+            </intent-filter>
+
+            <intent-filter android:label="@string/intent_deeplink">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "https://mobile.tinmoi24.vn/” -->
+                <data android:scheme="https" android:host="www.24h.com.vn/" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+            </intent-filter>
+
         </activity>
 
         <activity android:name=".DemoYoutubeVideo"
@@ -145,53 +184,53 @@
         <activity android:name="com.test.DetailNewsActivity" />
         <activity android:name="com.test.HtmlActivity" />
         <activity android:name="com.test.BottomNavActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name="com.test.ProtocActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name="com.test.DownloadActivity"
             android:label="@string/title_activity_download"
             android:theme="@style/NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name="com.test.DatabaseActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name="com.test.DataBaseActivity"
             android:label="@string/title_activity_data_base"
             android:theme="@style/NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name="com.test.KeyboardActivity" />
         <activity android:name="com.test.LoadActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name="com.test.TestActivity3" />
         <activity android:name="com.test.Test2Activity" />
@@ -203,11 +242,11 @@
 
         <activity android:name="com.activity.ListNewsActivity" />
         <activity android:name="com.webview.WebviewActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            </intent-filter>
+<!--                &lt;!&ndash; <category android:name="android.intent.category.LAUNCHER" /> &ndash;&gt;-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name="com.activity.VideoActivity">
 
@@ -217,11 +256,11 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name="com.activity.ListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name=".DetailActivity" />
 

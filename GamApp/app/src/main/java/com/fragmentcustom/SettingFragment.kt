@@ -58,11 +58,16 @@ class SettingFragment : Fragment() {
 
         imgAvatar = view.findViewById(R.id.imgAvatar)
         layoutLogin.setOnClickListener{
-            val topActivity = Utils.getActivity(requireContext())
-            if(topActivity is MainActivity) {
-                val fm = topActivity.supportFragmentManager
-                val loginFragment = LoginFragment.newInstance("", "")
-                loginFragment.show(fm, "login")
+
+            val sharedPreference:DataPreference = DataPreference(this.requireContext())
+            val accountUser = sharedPreference.getValueJSON(PREFERENCE.ACCOUNTUSER)
+            if(accountUser !is JSONObject) {
+                val topActivity = Utils.getActivity(requireContext())
+                if(topActivity is MainActivity) {
+                    val fm = topActivity.supportFragmentManager
+                    val loginFragment = LoginFragment.newInstance("", "")
+                    loginFragment.show(fm, "login")
+                }
             }
         }
 

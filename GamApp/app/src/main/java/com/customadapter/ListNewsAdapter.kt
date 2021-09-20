@@ -1,5 +1,8 @@
 package com.customadapter
 
+import android.graphics.Color
+import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.api.Global
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
 import com.khaolok.myloadmoreitem.Constant
@@ -22,8 +26,33 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
         var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)
         var constraintLayoutP: ConstraintLayout = itemView!!.findViewById(R.id.constraintLayoutP)
+
+        var imgCover2: ImageView? = null
+        var imgCover3: ImageView? = null
+
+        init {
+
+            val typefaceTitle = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaysemibold.ttf")
+            txtTitle.setTypeface(typefaceTitle)
+//            txtTitle.setTextColor(Color.parseColor("#444444"))
+            txtTitle.setTextColor(txtDesc.getResources().getColor(R.color.titlenewscolor, null))
+
+            val typefaceDesc = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaymedium.ttf")
+            txtDesc.setTypeface(typefaceDesc)
+            txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.descnewscolor, null))
+
+            if(itemView.findViewById<ImageView>(R.id.imgCover2) != null) {
+                imgCover2 = itemView.findViewById<ImageView>(R.id.imgCover2)
+            }
+
+            if(itemView.findViewById<ImageView>(R.id.imgCover3) != null) {
+                imgCover3 = itemView.findViewById<ImageView>(R.id.imgCover3)
+            }
+        }
     }
+
 
     interface ListNewsAdapterListener {
         fun click_ListNewsAdapterListener(position: Int)
@@ -43,6 +72,26 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
             return NewsHolder1(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.newsholder1,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_ITEM_LARGE) {
+            return NewsHolder1(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.newsholder2,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_ITEM_THREE) {
+            return NewsHolder1(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.newsholder3,
                     parent,
                     false
                 )
@@ -71,13 +120,34 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
             return Constant.VIEW_TYPE_LOADING
         }
 
+        val jObject = mList[position]
+        if(jObject is JSONObject) {
+            if(jObject.has("art_view")) {
+                val art_view = jObject.getInt("art_view")
+                Log.d("vietnb", "art_view: $art_view")
+                if(art_view == 1) {
+                    return Constant.VIEW_TYPE_ITEM_LARGE
+                } else if(art_view == 2) {
+                    return Constant.VIEW_TYPE_ITEM_THREE
+                }
+            }
+        }
+
+        if(position == 0) {
+            return Constant.VIEW_TYPE_ITEM_LARGE
+        }
+
         return Constant.VIEW_TYPE_ITEM
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is NewsHolder1)
         {
-            val art = JSONObject(mList[position].toString())
+            holder.imgComment.visibility = View.INVISIBLE
+            val jObject = JSONObject(mList[position].toString())
+            val doc = jObject.getJSONObject("Doc")
+            val art = doc.getJSONObject("Art")
+
             if(art.has("title")) {
                 holder.txtTitle.text = art["title"].toString()
             }
@@ -95,15 +165,41 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
 
             }
 
+            if(art.has("listimage")) {
+                val listimage = art.getJSONArray("listimage")
+                if(listimage.length()> 2) {
+                    val cover1 = listimage[1].toString()
+                    val radius = 20; // corner radius, higher value = more rounded
+                    val margin = 0; // crop margin, set to 0 for corners with no crop
+
+                    if(holder.imgCover2 != null) {
+                        Glide.with(holder.imgCover2!!.context)
+                            .load(cover1)
+                            .transform(RoundedCornersTransformation(radius, margin))
+                            .placeholder(R.drawable.thumbnews)
+                            .into(holder.imgCover2!!)
+                    }
+
+                    if(holder.imgCover3 != null) {
+                        val cover2 = listimage[2].toString()
+                        Glide.with(holder.imgCover3!!.context)
+                            .load(cover2)
+                            .transform(RoundedCornersTransformation(radius, margin))
+                            .placeholder(R.drawable.thumbnews)
+                            .into(holder.imgCover3!!)
+                    }
+                }
+            }
+
             var nameWebsite = ""
             if(art.has("sid")) {
                 val sid = art.getInt("sid")
-                //nameWebsite = Global.getNameWebsite(sid)
+                nameWebsite = Global.getNameWebsite(sid, holder.txtDesc.context)
             }
 
             if(art.has("posttime")) {
                 val posttime:Long = art["posttime"] as Long
-                //nameWebsite = nameWebsite + " | " + Global.currentTimeSecUTC(posttime)
+                nameWebsite = nameWebsite + " • " + Global.currentTimeSecUTC(posttime)
             }
 
             holder.imgIconMask.visibility = View.INVISIBLE
@@ -115,11 +211,15 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
             }
 
             if(art.has("sizeCmt")) {
-                val sizeCmt = art["sizeCmt"]
-                nameWebsite = nameWebsite + " | " + sizeCmt + " Bình luận"
+                val sizeCmt = art.getInt("sizeCmt")
+                if(sizeCmt > 0) {
+                    nameWebsite = nameWebsite + " • " + sizeCmt
+                    holder.imgComment.visibility = View.VISIBLE
+                }
             }
 
             holder.txtDesc.text = nameWebsite
+            //holder.txtDesc.text = "24h • 2 giờ • 15"
 
             holder.constraintLayoutP.setOnClickListener{
                 if(listener != null) {

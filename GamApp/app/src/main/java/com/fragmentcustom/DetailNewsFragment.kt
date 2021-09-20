@@ -6,27 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.api.APIService
 import com.api.Global
-import com.activity.MainActivity
+import com.barservicegam.app.MainActivity
 import com.barservicegam.app.R
 import com.customadapter.DetailNewsAdapter
-import com.customadapter.ListNewsAdapter
-import com.fragula.extensions.addFragment
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import com.hannesdorfmann.swipeback.Position
-import com.hannesdorfmann.swipeback.SwipeBack
+import com.lib.Utils
 import data.dataHtml
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -337,16 +329,16 @@ class DetailNewsFragment : Fragment() {
         txtTitle = view.findViewById(R.id.txtTitle)
         if(art.has("sid")) {
             val sid = art.getInt("sid")
-            txtTitle.text = Global.getNameWebsite(sid)
+            txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)
         }
 
         imgBack = view.findViewById(R.id.imgBack)
         imgBack.setOnClickListener{
 //            childFragmentManager.popBackStack()
             Log.d("vietnb", "goi vao day da")
-            if (activity is MainActivity) {
-                val mainActivity: MainActivity? = activity as? MainActivity
-                mainActivity?.actionBack()
+            val topActivity = Utils.getActivity(requireContext())
+            if (topActivity is MainActivity) {
+                topActivity.actionBack()
             }
         }
 

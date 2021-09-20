@@ -46,7 +46,7 @@ class VideoFragment : Fragment() {
     lateinit  var imgFullscreen: ImageView
 
     lateinit var layoutVideo: ConstraintLayout
-    lateinit var layoutControl: ConstraintLayout
+    lateinit var layoutMenu: ConstraintLayout
 
     var isFullScreen:Boolean = false
     lateinit var layoutParent: ConstraintLayout
@@ -81,13 +81,13 @@ class VideoFragment : Fragment() {
 
         layoutParent = view.findViewById(R.id.layoutParent)
         layoutVideo = view.findViewById(R.id.layoutVideo)
-        layoutControl = view.findViewById(R.id.layoutControl)
+        layoutMenu = view.findViewById(R.id.layoutMenu)
 
         layoutParent.setOnClickListener{
             if(showingControlVideo) {
-                layoutControl.visibility = View.INVISIBLE
+                layoutMenu.visibility = View.INVISIBLE
             } else {
-                layoutControl.visibility = View.VISIBLE
+                layoutMenu.visibility = View.VISIBLE
             }
             showingControlVideo = !showingControlVideo
         }
@@ -124,7 +124,7 @@ class VideoFragment : Fragment() {
 
 //        val heightStatus = Utils.getStatusBarHeight(this.requireContext())
         val heightBottomBar = 0//Utils.getHeightBottomBar(this.requireContext())
-        imgFullscreen = view.findViewById(R.id.imgFullscreen)
+        imgFullscreen = view.findViewById(R.id.imgFullScreen)
         imgFullscreen.setOnClickListener{
 
             if (layoutVideo.parent != null) {

@@ -1,50 +1,38 @@
 package com.customadapter
 
-import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Typeface
-import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
-import com.customview.ExoVideo
-import com.fragmentcustom.HomePagerFragment
-import com.fragmentcustom.RelativeFragment
+import com.customview.BVPlayerVideo
 import com.khaolok.myloadmoreitem.DetailView
 import com.lib.Utils
 import com.lib.Utils.underline
 import data.dataHtml
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import org.json.JSONArray
 
 public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var positionVideoPlay: Int = -1
     lateinit  var rclView:RecyclerView
     lateinit  var mList:ArrayList<dataHtml>
-    lateinit var exoView: ExoVideo
+    lateinit var bvPlayerVideo: BVPlayerVideo
 
     constructor(context: Context, mList: ArrayList<dataHtml>, rclView: RecyclerView): this(context) {
         this.mList = mList
 
 //        positionVideoPlay = 1
         this.rclView = rclView
-        this.exoView = ExoVideo(this.context!!)
+        this.bvPlayerVideo = BVPlayerVideo(this.context!!)
 
         rclView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -72,8 +60,8 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
     }
 
     inner class DetailNewsCategory(v: View) : RecyclerView.ViewHolder(v) {
-        var txtCategory: TextView = itemView!!.findViewById(R.id.txtCategory)
-        var txtWebsite: TextView = itemView!!.findViewById(R.id.txtWebsite)
+        var txtCategory: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var txtWebsite: TextView = itemView!!.findViewById(R.id.txtDesc)
 
         fun constructor() {
             val typeface = Typeface.createFromAsset(txtCategory.getContext().assets, "fonts/sfuitextitalic.ttf")
@@ -267,20 +255,20 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
                 .placeholder(R.drawable.thumbnews)
                 .into(holder.imgCover)
 
-            if(holder.layoutVideo.findViewWithTag<ExoVideo>(100) != null) {
-                val btnExtra = holder.layoutVideo.findViewWithTag<ExoVideo>(100)
+            if(holder.layoutVideo.findViewWithTag<BVPlayerVideo>(100) != null) {
+                val btnExtra = holder.layoutVideo.findViewWithTag<BVPlayerVideo>(100)
                 if (btnExtra.parent != null) {
                     (btnExtra.parent as ViewGroup).removeView(btnExtra)
                 }
             }
 
             if(positionVideoPlay == position) {
-                exoView.tag = 100
-                exoView.layoutParams = ConstraintLayout.LayoutParams(
+                bvPlayerVideo.tag = 100
+                bvPlayerVideo.layoutParams = ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT
                 )
-                holder.layoutVideo.addView(exoView)
+                holder.layoutVideo.addView(bvPlayerVideo)
             }
 
             holder.layoutVideo.setOnClickListener{
@@ -292,8 +280,8 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
     }
 
     fun showVideoPosition(position: Int) {
-        if (exoView.parent != null) {
-            (exoView.parent as ViewGroup).removeView(exoView)
+        if (bvPlayerVideo.parent != null) {
+            (bvPlayerVideo.parent as ViewGroup).removeView(bvPlayerVideo)
         }
 
         Log.d("vietnb", "position luc nay: $position")
@@ -314,19 +302,19 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
 //            }
 //        }
 
-        exoView.setUrlVideo(urlVideo)
+        bvPlayerVideo.loadVideo(urlVideo)
         notifyItemChanged(position)
     }
 
     fun pauseVideo() {
-        if(exoView != null) {
-            exoView.pauseVideo()
+        if(bvPlayerVideo != null) {
+            bvPlayerVideo.pauseVideo()
         }
     }
 
     fun playVideo() {
-        if(exoView != null) {
-            exoView.playVideo()
+        if(bvPlayerVideo != null) {
+            bvPlayerVideo.playVideo()
         }
     }
 }

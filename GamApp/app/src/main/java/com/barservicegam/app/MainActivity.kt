@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
+import android.net.Uri
 import android.opengl.Visibility
 import android.os.Bundle
 import android.provider.MediaStore
@@ -39,10 +40,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var layoutParent: ConstraintLayout
     lateinit var bottomView: BottomNavigationView
 
-    var homePagerFragment = HomePagerFragment.newInstance("", "")//HomePagerFragment.newInstance("", "")
+    var homePagerFragment = HomePagerFragment.newInstance("", "")
     var listVideoFragment = VideoPagerFragment.newInstance("", "")
     var exploreFragment = AutoSearchFragment.newInstance("", "")
-    var settingFragment = YoutubeFragment.newInstance("", "")
+    var settingFragment = SettingFragment.newInstance("", "")
 
     fun actionBack() {
         if(bottomView.selectedItemId == R.id.navigation_news) {
@@ -103,6 +104,12 @@ class MainActivity : AppCompatActivity() {
         Utils.hiddenBottomBar(this)
 //        WindowCompat.setDecorFitsSystemWindows(window, true)
 
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+
+        Log.d("vietnb", "action: $action")
+        Log.d("vietnb", "data: $data")
+
         var str = "https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2021/9/10/bt-long-16312553669101597457462.mp4"
 //        str = "https://media.tinmoi24.vn/24h/upload/3-2021/videoclip/2021-07-23/1626976327-layvosinhtu.m3u8"
         val image = findViewById<ImageView>(R.id.imgThumbVideo)
@@ -121,6 +128,9 @@ class MainActivity : AppCompatActivity() {
         navigatorTabSetting = findViewById(R.id.navigatorTabSetting)
 
         bottomView = findViewById(R.id.bottomView)
+
+        bottomView.itemIconTintList = null
+
         layoutParent.setOnClickListener{
             this.hideSoftKeyboard()
         }
@@ -329,7 +339,7 @@ class MainActivity : AppCompatActivity() {
                 jObject.put("avatar", avatar)
                 sharedPreference.save(PREFERENCE.ACCOUNTUSER, jObject.toString())
                 EventBus.getDefault().post(EventBusFire("loginSuccess", valueString = ""))
-                //settingFragment.refreshDataAccountUser()
+                settingFragment.refreshDataAccountUser()
 
             }).executeAsync()
     }
@@ -338,7 +348,18 @@ class MainActivity : AppCompatActivity() {
     {
         val sharedPreference:DataPreference = DataPreference(this)
         sharedPreference.save(PREFERENCE.ACCOUNTUSER, "")
-        //settingFragment.refreshDataAccountUser()
+        settingFragment.refreshDataAccountUser()
         LoginManager.getInstance().logOut()
+    }
+
+    fun shareVideo(url: String){
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.putExtra(Intent.EXTRA_TEXT, url)
+        intent.putExtra(Intent.EXTRA_SUBJECT, "")
+        intent.type = "text/plain"
+        val shareIntent = Intent.createChooser(intent, "Share File");
+
+        startActivity(shareIntent);
     }
 }
