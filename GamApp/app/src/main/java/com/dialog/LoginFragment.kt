@@ -1,15 +1,18 @@
 package com.dialog
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import com.barservicegam.app.MainActivity
+import androidx.fragment.app.Fragment
+import com.main.app.MainActivity
 import com.barservicegam.app.R
+import com.google.android.gms.common.SignInButton
 import com.lib.Utils
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -24,7 +27,9 @@ class LoginFragment : DialogFragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    var onResult: ((sum: Double, text: String) -> Unit)? = null
+    lateinit var signInButton: SignInButton
+
+    var gotoConfirmOTP: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,25 +46,46 @@ class LoginFragment : DialogFragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_login, container, false)
-        val btnAccept = view.findViewById<Button>(R.id.btnLoginFacebook)
-        btnAccept.setOnClickListener{
+        val btnLoginFacebook = view.findViewById<Button>(R.id.btnLoginFacebook)
+        btnLoginFacebook.setOnClickListener{
             val topActivity = Utils.getActivity(requireContext())
             if(topActivity is MainActivity) {
                 topActivity.loginFacebook()
+            }
+            //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
+            //onResult?.invoke(10.0, "be continue")
+            dismiss()
+        }
+
+        //signInButton = view.findViewById<View>(R.id.signInButton) as SignInButton
+        var btnLoginGoogle = view.findViewById<Button>(R.id.btnLoginGoogle)
+        btnLoginGoogle.setOnClickListener{
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.loginGoogle()
             }
 
             //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
 
             //onResult?.invoke(10.0, "be continue")
             dismiss()
-
         }
 
-        val btnLoginApple = view.findViewById<Button>(R.id.btnLoginApple)
-//        btnLoginApple.setOnClickListener{
-//            //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
-//            dismiss()
-//        }
+        var tfPhone = view.findViewById<EditText>(R.id.tfPhone)
+
+        var btnLoginPhone = view.findViewById<Button>(R.id.btnPhone)
+        btnLoginPhone.setOnClickListener{
+//            val topActivity = Utils.getActivity(requireContext())
+//            if(topActivity is MainActivity) {
+//                topActivity.loginPhone(tfPhone.text.toString())
+//            }
+            //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
+
+            dismiss()
+            gotoConfirmOTP?.invoke()
+        }
+
+
 
         return view
     }

@@ -6,6 +6,7 @@ plugins {
 }
 
 apply plugin: 'kotlin-kapt' //databinding
+apply plugin: 'com.google.gms.google-services' //init firebase
 
 android {
     compileSdkVersion 30
@@ -19,7 +20,7 @@ android {
     defaultConfig {
         multiDexEnabled true
 
-        applicationId "com.gam.app"
+        applicationId "com.barservicegam.app"
         minSdkVersion 26 //19
         targetSdkVersion 30
         versionCode 1
@@ -44,6 +45,13 @@ android {
 }
 
 dependencies {
+    ///login google
+    implementation 'com.github.GoodieBag:Pinview:v1.4'
+
+    implementation platform('com.google.firebase:firebase-bom:28.4.1')
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
     kapt 'com.android.databinding:compiler:2.3.1'

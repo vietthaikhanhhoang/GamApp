@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.dialog.LogoutDialog
 import com.lib.Utils

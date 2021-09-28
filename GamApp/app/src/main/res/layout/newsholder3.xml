@@ -110,7 +110,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout9" />
 
     <TextView
-        android:id="@+id/txtDesc"
+        android:id="@+id/txtCategory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -126,9 +126,9 @@
         android:layout_marginStart="4dp"
         android:scaleType="centerCrop"
         android:src="@drawable/commentnews"
-        app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
-        app:layout_constraintStart_toEndOf="@+id/txtDesc"
-        app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtCategory"
+        app:layout_constraintStart_toEndOf="@+id/txtCategory"
+        app:layout_constraintTop_toTopOf="@+id/txtCategory" />
 
     <View
         android:id="@+id/viewLine"
@@ -140,5 +140,5 @@
         android:background="@color/viewLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDesc" />
+        app:layout_constraintTop_toBottomOf="@+id/txtCategory" />
 </androidx.constraintlayout.widget.ConstraintLayout>

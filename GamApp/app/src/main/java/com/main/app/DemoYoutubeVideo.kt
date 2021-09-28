@@ -1,4 +1,4 @@
-package com.barservicegam.app
+package com.main.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

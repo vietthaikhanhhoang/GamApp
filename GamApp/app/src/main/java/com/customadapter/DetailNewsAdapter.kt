@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
@@ -18,8 +19,10 @@ import com.customview.BVPlayerVideo
 import com.khaolok.myloadmoreitem.DetailView
 import com.lib.Utils
 import com.lib.Utils.underline
+import com.lib.toPx
 import data.dataHtml
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+
 
 public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var positionVideoPlay: Int = -1
@@ -52,39 +55,77 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
     inner class DetailNewsTitle(v: View) : RecyclerView.ViewHolder(v){
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
 
-        fun constructor() {
-//            Log.d("vietnb", "dm no co vao khong nhi 111")
-//            val typeface = Typeface.createFromAsset(txtTitle.getContext().assets, "fonts/sfuitextitalic.ttf")
-//            txtTitle.setTypeface(typeface)
+        init {
+            val typeface = Typeface.createFromAsset(
+                txtTitle.getContext().assets,
+                "fonts/sfuidisplaysemibold.ttf"
+            )
+            txtTitle.setTypeface(typeface)
+            txtTitle.textSize = 30f
+            txtTitle.setTextColor(txtTitle.getResources().getColor(R.color.contentdetailnews, null))
         }
     }
 
     inner class DetailNewsCategory(v: View) : RecyclerView.ViewHolder(v) {
-        var txtCategory: TextView = itemView!!.findViewById(R.id.txtDesc)
-        var txtWebsite: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var txtCategory: TextView = itemView!!.findViewById(R.id.txtCategory)
+        var txtWebsite: TextView = itemView!!.findViewById(R.id.txtWebsite)
+        var txtTime: TextView = itemView!!.findViewById(R.id.txtTime)
 
-        fun constructor() {
-            val typeface = Typeface.createFromAsset(txtCategory.getContext().assets, "fonts/sfuitextitalic.ttf")
+        init {
+            val typeface = Typeface.createFromAsset(
+                txtWebsite.getContext().assets,
+                "fonts/sfuidisplaysemibold.ttf"
+            )
             txtCategory.setTypeface(typeface)
             txtWebsite.setTypeface(typeface)
+            txtTime.setTypeface(typeface)
+
+            txtCategory.textSize = 14f
+            txtWebsite.textSize = 14f
+            txtTime.textSize = 14f
+
+            txtCategory.setTextColor(txtCategory.getResources().getColor(R.color.white, null))
+            txtWebsite.setTextColor(
+                txtCategory.getResources().getColor(
+                    R.color.com_facebook_blue,
+                    null
+                )
+            )
+            txtWebsite.alpha = 0.5f
+            txtTime.setTextColor(txtTime.getResources().getColor(R.color.descnewscolor, null))
         }
     }
 
     inner class DetailNewsDesc(v: View) : RecyclerView.ViewHolder(v) {
-        var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var txtDesc: TextView = itemView!!.findViewById(R.id.txtCategory)
 
-        fun constructor() {
-            val typeface = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuitextitalic.ttf")
+        init {
+            val typeface = Typeface.createFromAsset(
+                txtDesc.getContext().assets,
+                "fonts/sfuidisplaysemibold.ttf"
+            )
             txtDesc.setTypeface(typeface)
+            txtDesc.textSize = 20f
+            txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.contentdetailnews, null))
         }
     }
 
     inner class DetailNewsContent(v: View) : RecyclerView.ViewHolder(v) {
         var txtContent: TextView = itemView!!.findViewById(R.id.txtContent)
 
-        fun constructor() {
-            val typeface = Typeface.createFromAsset(txtContent.getContext().assets, "fonts/sfuitextitalic.ttf")
+        init {
+            val typeface = Typeface.createFromAsset(
+                txtContent.getContext().assets,
+                "fonts/sfuitextregular.ttf"
+            )
             txtContent.setTypeface(typeface)
+            txtContent.textSize = 20f
+            txtContent.setTextColor(
+                txtContent.getResources().getColor(
+                    R.color.contentdetailnews,
+                    null
+                )
+            )
         }
     }
 
@@ -161,7 +202,7 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
             )
         }
 
-        return DetailNewsContent (
+        return DetailNewsContent(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.detailnews_content_holder,
                 parent,
@@ -200,31 +241,58 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
             holder.txtTitle.text = mList[position].content
         } else if (holder is DetailNewsAdapter.DetailNewsCategory) {
 
-            val arrInfo = mList[position].content.split("|").toTypedArray()
-            if(arrInfo.count() > 2) {
+            val arrInfo = mList[position].content.split(" • ").toTypedArray()
+            if(arrInfo.count() > 0) {
                 holder.txtCategory.text = arrInfo[0]
-                holder.txtWebsite.text = arrInfo[1] + " | " + arrInfo[2]
+            }
+            if(arrInfo.count() > 1) {
+                holder.txtWebsite.text = arrInfo[1]
+            }
+            if(arrInfo.count() > 2) {
+                holder.txtTime.text = " • " + arrInfo[2]
             }
         } else if (holder is DetailNewsAdapter.DetailNewsDesc) {
             holder.txtDesc.text = mList[position].content
         } else if (holder is DetailNewsAdapter.DetailNewsContent) {
+            var lp: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            lp.setMargins(16.toPx(), 8.toPx(), 16.toPx(), 0)
+            holder.txtContent.setPadding(0, 0, 0, 0)
+
+//            holder.txtContent.setBackgroundResource(R.color.white)
+
             if(mList[position].bg) {
+                lp.setMargins(16.toPx(), 0, 16.toPx(), 0)
+                holder.txtContent.setPadding(8.toPx(), 8.toPx(), 8.toPx(), 8.toPx())
+
                 holder.txtContent.setBackgroundResource(R.color.gray)
-                val layoutParam = holder.txtContent.layoutParams
-                holder.txtContent.setPadding(8, 8 , 8 , 8)
             }
+            holder.txtContent.layoutParams = lp
+
             holder.txtContent.text = mList[position].content
 
             if(mList[position].type == "italic") {
-                holder.txtContent.text = HtmlCompat.fromHtml(mList[position].content, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                holder.txtContent.text = HtmlCompat.fromHtml(
+                    mList[position].content,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
                 holder.txtContent.setTypeface(null, Typeface.ITALIC)
             } else if(mList[position].type == "underline") {
-                holder.txtContent.text = HtmlCompat.fromHtml(mList[position].content, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                holder.txtContent.text = HtmlCompat.fromHtml(
+                    mList[position].content,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
                 holder.txtContent.underline()
             } else if(mList[position].type == "strong") {
                 holder.txtContent.setTypeface(null, Typeface.BOLD)
             } else if(mList[position].type == "texthtml") {
-                holder.txtContent.text = HtmlCompat.fromHtml(mList[position].content, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                holder.txtContent.text = HtmlCompat.fromHtml(
+                    mList[position].content,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             }
         } else if (holder is DetailNewsAdapter.DetailNewsImage) {
             val cover = mList[position].content
@@ -238,6 +306,20 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
 //                .into(holder.imgCover)
 
             Utils.bindImageBitMap(holder.imgCover, holder.imgCover.context, cover)
+
+            ///neu image la the dau tien thi top = 0
+            var lp: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            lp.setMargins(16.toPx(), 16.toPx(), 16.toPx(), 0)
+
+            if(mList[position].bg) {
+                lp.setMargins(16.toPx(), 0, 16.toPx(), 0)
+            }
+            holder.imgCover.layoutParams = lp
+
         } else if (holder is DetailNewsAdapter.DetailNewsWebview) {
             var content = Utils.embeddStyleLOADHMTL(mList[position].content)
             holder.webNews.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null)

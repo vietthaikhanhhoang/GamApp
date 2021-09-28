@@ -1,13 +1,11 @@
 package com.customview
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
-import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
@@ -16,29 +14,20 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
-import at.huber.youtubeExtractor.VideoMeta
-import at.huber.youtubeExtractor.YouTubeExtractor
-import at.huber.youtubeExtractor.YtFile
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.lib.Utils
 import com.lib.eventbus.EventBusFire
 import com.lib.toDp
 import com.lib.toPx
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -214,7 +203,7 @@ class ExoVideo @JvmOverloads constructor(
                             //Toast.makeText(context, "Ket thuc video", Toast.LENGTH_SHORT).show()
                             var secondduration = playerView.player!!.duration/1000
                             val textduration = String.format("%02d:%02d", (secondduration / 60).toInt(),((secondduration % 60)).toInt())
-                            txtTime.text = textduration + "/" + textduration
+                            txtTime.text = textduration + " / " + textduration
                         }
                     }
                 }
@@ -381,7 +370,7 @@ class ExoVideo @JvmOverloads constructor(
 
                     val textcurrent = String.format("%02d:%02d", (secondcurrent / 60).toInt(),((secondcurrent % 60)).toInt())
                     val textduration = String.format("%02d:%02d", (secondduration / 60).toInt(),((secondduration % 60)).toInt())
-                    txtTime.text = textcurrent + "/" + textduration
+                    txtTime.text = textcurrent + " / " + textduration
                 }
             }
 

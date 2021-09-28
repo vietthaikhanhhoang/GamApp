@@ -1,26 +1,38 @@
-package com.barservicegam.app
+package com.main.app
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.barservicegam.app.BuildConfig
+import com.barservicegam.app.R
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.fragmentcustom.*
 import com.fragula.Navigator
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lib.*
 import com.lib.eventbus.EventBusFire
 import data.DataPreference
@@ -28,8 +40,17 @@ import data.PREFERENCE
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    //google
+    private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+    //phone
+    private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
     lateinit var callbackManager: CallbackManager
 
     lateinit var navigatorTabNews: Navigator
@@ -99,6 +120,55 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(this)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        auth = Firebase.auth
+
+        ////Setting callbackPhone
+        callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                // This callback will be invoked in two situations:
+                // 1 - Instant verification. In some cases the phone number can be instantly
+                //     verified without needing to send or enter a verification code.
+                // 2 - Auto-retrieval. On some devices Google Play services can automatically
+                //     detect the incoming verification SMS and perform verification without
+                //     user action.
+                Log.d("vietnb", "onVerificationCompleted:$credential")
+                signInWithPhoneAuthCredential(credential)
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                Log.w("vietnb", "onVerificationFailed", e)
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    // Invalid request
+                } else if (e is FirebaseTooManyRequestsException) {
+                    // The SMS quota for the project has been exceeded
+                }
+                Toast.makeText(this@MainActivity, "Lỗi xác thực SĐT", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                Log.d("vietnb", "onCodeSent:$verificationId")
+                // Save verification ID and resending token so we can use them later
+//                storedVerificationId = verificationId
+//                resendToken = token
+
+                /////Tao credetal va signIn
+                //user se nhap otp va goi ham nay vao: hien tai fake luon cho nhanh
+                verifyPhoneNumberWithCode(verificationId, "888888")
+            }
+    }
+
         OrientationUtils.lockOrientationPortrait(this)
         setContentView(R.layout.activity_main2)
         Utils.hiddenBottomBar(this)
@@ -112,11 +182,6 @@ class MainActivity : AppCompatActivity() {
 
         var str = "https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2021/9/10/bt-long-16312553669101597457462.mp4"
 //        str = "https://media.tinmoi24.vn/24h/upload/3-2021/videoclip/2021-07-23/1626976327-layvosinhtu.m3u8"
-        val image = findViewById<ImageView>(R.id.imgThumbVideo)
-        image.visibility = View.INVISIBLE
-
-        val bm = getVideoThumbnail(str, 100, 100)//Utils.getThumbVideoMp4(str)
-        image.setImageBitmap(bm)
 
         FacebookSdk.fullyInitialize()
         callbackManager = CallbackManager.Factory.create()
@@ -154,6 +219,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         setBottomBarListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+//        val currentUser = auth.currentUser
+//        updateUI(currentUser)
     }
 
     fun fullScreen(isFullScreen: Boolean) {
@@ -209,6 +281,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val SELECTED_ITEM_KEY = "SELECTED_ITEM_KEY"
+        private const val TAG = "GoogleActivity"
+        private const val RC_SIGN_IN = 9001
     }
 
     ///login facebook
@@ -217,6 +291,69 @@ class MainActivity : AppCompatActivity() {
         callbackManager.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
         Log.d("letsSee", "malsehnnnnnn: " + data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d("vietnb", "firebaseAuthWithGoogle:" + account.id)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("vietnb", "Google sign in failed", e)
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("vietnb", "signInWithCredential:success")
+                    val user = auth.currentUser
+                    updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("vietnb", "signInWithCredential:failure", task.exception)
+                    updateUI(null)
+                }
+            }
+    }
+
+    private fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+    // [END signin]
+
+    private fun updateUI(user: FirebaseUser?) {
+        Log.d("vietnb", "user: $user")
+
+        var uid = ""
+        var name = ""
+        var avatar = ""
+
+        if(user != null) {
+            uid = user.uid
+            name = user.displayName.toString()
+            avatar = user.photoUrl.toString()
+
+            if(name == null || name.isEmpty() || name == "null") {
+                name = "SĐT"
+            }
+        }
+
+        val sharedPreference: DataPreference = DataPreference(this)
+        var jObject = JSONObject()
+        jObject.put("name", name)
+        jObject.put("avatar", avatar)
+        sharedPreference.save(PREFERENCE.ACCOUNTUSER, jObject.toString())
+        EventBus.getDefault().post(EventBusFire("loginSuccess", valueString = ""))
+        settingFragment.refreshDataAccountUser()
     }
 
     fun loginFacebook()
@@ -243,6 +380,16 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    fun loginGoogle() {
+       Log.d("vietnb", "login Google")
+        signIn()
+    }
+
+    fun logoutGoogle(){
+        Firebase.auth.signOut()
+        googleSignInClient.signOut()
     }
 
     @SuppressLint("LongLogTag")
@@ -362,4 +509,67 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(shareIntent);
     }
+
+    ////Login Phone
+    fun loginPhone(phoneNumber: String) {
+        Log.d("vietnb", "login Phone")
+        if(phoneNumber.isNotEmpty()) {
+            var phone = "+84" + phoneNumber
+            //verifyPhoneNumber
+            val options = PhoneAuthOptions.newBuilder(auth)
+                .setPhoneNumber(phone)       // Phone number to verify
+                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                .setActivity(this)                 // Activity (for callback binding)
+                .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
+                .build()
+            PhoneAuthProvider.verifyPhoneNumber(options)
+        }
+    }
+
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+
+                    val user = task.result?.user
+                    //lay duoc thong tin user
+                    updateUI(user)
+
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                    }
+                    // Update UI
+                }
+            }
+    }
+
+    private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
+        // [START verify_with_code]
+        val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+        signInWithPhoneAuthCredential(credential)
+        // [END verify_with_code]
+    }
+
+    ///neu can resend otp
+    private fun resendVerificationCode(
+        phoneNumber: String,
+        token: PhoneAuthProvider.ForceResendingToken?
+    ) {
+        //https://github.com/firebase/snippets-android/blob/8184cba2c40842a180f91dcfb4a216e721cc6ae6/auth/app/src/main/java/com/google/firebase/quickstart/auth/kotlin/PhoneAuthActivity.kt#L105-L105
+        val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)       // Phone number to verify
+            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setActivity(this)                 // Activity (for callback binding)
+            .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
+        if (token != null) {
+            optionsBuilder.setForceResendingToken(token) // callback's ForceResendingToken
+        }
+        PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
+    }
+
 }

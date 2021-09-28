@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "304149680608",
+    "project_id": "barservicegam",
+    "storage_bucket": "barservicegam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304149680608:android:94a5e8160595abcd5b9b85",
+        "android_client_info": {
+          "package_name": "com.barservicegam.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304149680608-6jrcb80th6h0o6fla03r8acci6f7afhv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.barservicegam.app",
+            "certificate_hash": "5a1884c36220639119e7c14d4ced20009b6b9c0e"
+          }
+        },
+        {
+          "client_id": "304149680608-jj0nf6gglscbfl9idh5v2ogd3do92oad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.barservicegam.app",
+            "certificate_hash": "c8f9230d42e68d9ed840d467fb191d2a5b6809da"
+          }
+        },
+        {
+          "client_id": "304149680608-30h5pdk9k410im3quf25dugeofg4ic6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKPRYlTtS5UM7qXXuPTkWlVOeouDEE4co"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304149680608-30h5pdk9k410im3quf25dugeofg4ic6r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "304149680608-qs6q3e51p6dbrcdqqur6ng7i4qdqeakk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.barservicegam.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

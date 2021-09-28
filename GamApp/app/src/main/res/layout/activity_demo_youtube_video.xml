@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/layoutParent"
-    tools:context=".DemoYoutubeVideo">
+    tools:context="com.main.app.DemoYoutubeVideo">
 
     <com.google.android.youtube.player.YouTubePlayerView
         app:surface_type="texture_view"

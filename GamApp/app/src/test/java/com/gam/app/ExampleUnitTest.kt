@@ -1,4 +1,4 @@
-package com.gam.app
+package com.barservicegam.app
 
 import org.junit.Test
 

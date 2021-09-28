@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.main.app.MainActivity"
             android:configChanges="orientation|screenSize|layoutDirection"
             >
             <intent-filter>
@@ -63,7 +63,7 @@
 
         </activity>
 
-        <activity android:name=".DemoYoutubeVideo"
+        <activity android:name="com.main.app.DemoYoutubeVideo"
             android:configChanges="orientation|screenSize|layoutDirection"
             >
 <!--            <intent-filter>-->
@@ -262,7 +262,7 @@
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
         </activity>
-        <activity android:name=".DetailActivity" />
+        <activity android:name="com.main.app.DetailActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

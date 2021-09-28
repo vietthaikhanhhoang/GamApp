@@ -44,7 +44,7 @@ class BVPlayerVideo @JvmOverloads constructor(
             exoVideo.visibility = View.VISIBLE
             youtubeVideo.visibility = View.INVISIBLE
 
-            exoVideo.loadVideo(url)
+            exoVideo.loadVideo(strUrl)
             youtubeVideo.pauseVideo()
             //Log.d("vietnb", "play loadVideo exoplayer2 url $strUrl")
         } else {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.barservicegam.app.MainActivity">
+    tools:context="com.barservicegam.app.com.main.app.MainActivity">
 
 
 <!--    <com.facebook.login.widget.LoginButton-->

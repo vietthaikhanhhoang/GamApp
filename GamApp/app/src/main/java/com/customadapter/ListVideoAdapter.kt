@@ -10,7 +10,7 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.api.Global
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
 import com.customview.BVPlayerVideo
@@ -71,7 +71,7 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
         var imgPlay: ImageView = itemView!!.findViewById(R.id.imgPlay)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
         var layoutVideo: ConstraintLayout = itemView!!.findViewById(R.id.layoutVideo)
-        var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var txtDesc: TextView = itemView!!.findViewById(R.id.txtCategory)
 
         var imgShare: ImageView = itemView!!.findViewById(R.id.imgShare)
         var txtComment: TextView = itemView!!.findViewById(R.id.txtComment)

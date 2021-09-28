@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.api.APIService
 import com.api.Global
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.customadapter.DetailNewsAdapter
 import com.google.gson.GsonBuilder
@@ -84,15 +84,16 @@ class DetailNewsFragment : Fragment() {
         arrayContent.add(dataHtml(title, "title"));
         var category = category
 
-        if(art?.has("sid")) {
+        if(art.has("sid")) {
             val sid = art.getInt("sid")
-            //category = category + "|" + Global.getNameWebsite(sid)
+            category = category + " • " + Global.getNameWebsite(sid, requireContext())
         }
 
-        if(art?.has("posttime")) {
+        if(art.has("posttime")) {
             val posttime:Long = art["posttime"] as Long
-            //category = category + "|" + Global.currentTimeSecUTC(posttime)
+            category = category + " • " + Global.currentTimeSecUTC(posttime)
         }
+
         arrayContent.add(dataHtml(category, "category"))
 
         arrayContent.add(dataHtml(desc, "desc"))
@@ -135,7 +136,7 @@ class DetailNewsFragment : Fragment() {
                         var type = "italic"
 
                         var flag = false
-                        if(arrayContent.last().type == "img") {
+                        if(arrayContent.last().type == "img" || arrayContent.last().type == "video") {
                             flag = true
                         }
 //                        if(doc.body().children().size > 1) {
@@ -169,7 +170,13 @@ class DetailNewsFragment : Fragment() {
                     if (src != null) {
                         var type = "img"
                         var content = src
-                        arrayContent.add(dataHtml(content, type))
+
+                        var flag = false
+                        if(arrayContent.last().type == "desc") {
+                            flag = true
+                        }
+
+                        arrayContent.add(dataHtml(content, type, flag)) //image la the dau tien thi top = 0
                     }
                 } else if (element.tagName() == "video") {
                     Log.d("vietnb", "tag video: $element")
@@ -222,6 +229,7 @@ class DetailNewsFragment : Fragment() {
 
     private fun getRelativeNews() {
         var lid = ""
+
         if(art != null) {
             if(art.has("lid")) {
                 lid = art.getString("lid")
@@ -255,23 +263,17 @@ class DetailNewsFragment : Fragment() {
                         if (jsonObject.get("code").toString() == "200")
                         {
                             //Log.d("Pretty Printed JSON :", "hay vao day")
-                            if (jsonObject.getJSONArray("linfos") != null)
-                            {
-                                val linfos = jsonObject.getJSONArray("linfos")
-                                for (i in 0 until linfos.length()) {
-                                    val infos = JSONObject(linfos[i].toString())
-                                    if(infos.has("Doc")) {
-                                        val doc = JSONObject(infos.get("Doc").toString())
-                                        if(doc.has("Art")) {
-                                            val art = JSONObject(doc.get("Art").toString())
-//                                            Log.d("vietnb","art: " + art.toString())
-                                            arrNewsRelative.put(art)
-                                        }
+                            val linfos = jsonObject.getJSONArray("linfos")
+                            for (i in 0 until linfos.length()) {
+                                val infos = JSONObject(linfos[i].toString())
+                                if(infos.has("type")) {
+                                    val type = infos.getInt("type")
+                                    if(type == 1) { //dang bai bao art
+                                        arrNewsRelative.put(infos)
                                     }
                                 }
-
-                                relativeFragment.updateData(arrNewsRelative)
                             }
+                            relativeFragment.updateData(arrNewsRelative)
                         }
                     }
 

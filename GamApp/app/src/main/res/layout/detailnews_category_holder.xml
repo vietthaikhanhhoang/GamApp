@@ -10,30 +10,40 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/txtDesc"
+            android:id="@+id/txtCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@android:color/white"
             android:background="#E186A5"
             android:paddingLeft="8dp"
             android:paddingTop="4dp"
             android:paddingRight="8dp"
             android:paddingBottom="4dp"
             android:text="Phap luat"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/txtDesc"
+            android:id="@+id/txtWebsite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Người đưa tin | 1 phút trước"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
-            app:layout_constraintStart_toEndOf="@+id/txtDesc"
-            app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+            android:text="Dân Việt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/txtCategory"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="1 giờ trước"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/txtWebsite"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

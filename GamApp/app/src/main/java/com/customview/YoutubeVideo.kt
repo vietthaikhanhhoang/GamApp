@@ -10,8 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.lib.Utils
 import com.lib.toDp

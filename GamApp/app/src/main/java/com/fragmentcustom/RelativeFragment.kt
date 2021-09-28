@@ -44,7 +44,7 @@ class RelativeFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var rclView: RecyclerView
-    var listNewsAdapter = ListNewsAdapter(JSONArray(), false)
+    var listNewsAdapter = ListNewsAdapter(JSONArray(), false, true)
 
     val arrNews = JSONArray()
 

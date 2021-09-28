@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintDimensionRatio="H,16:9"
+        app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -84,9 +84,9 @@
         android:layout_marginEnd="16dp"
         android:scaleType="centerCrop"
         android:src="@drawable/sharevideo"
-        app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
+        app:layout_constraintBottom_toBottomOf="@+id/txtCategory"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+        app:layout_constraintTop_toTopOf="@+id/txtCategory" />
 
     <ImageView
         android:id="@+id/imgComment"
@@ -95,12 +95,12 @@
         android:layout_marginEnd="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/commentvideo"
-        app:layout_constraintBottom_toBottomOf="@+id/txtDesc"
+        app:layout_constraintBottom_toBottomOf="@+id/txtCategory"
         app:layout_constraintEnd_toStartOf="@+id/imgShare"
-        app:layout_constraintTop_toTopOf="@+id/txtDesc" />
+        app:layout_constraintTop_toTopOf="@+id/txtCategory" />
 
     <TextView
-        android:id="@+id/txtDesc"
+        android:id="@+id/txtCategory"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"

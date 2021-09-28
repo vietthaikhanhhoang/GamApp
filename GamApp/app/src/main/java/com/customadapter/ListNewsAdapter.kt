@@ -1,6 +1,5 @@
 package com.customadapter
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,13 +18,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = true) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = true, var isRelative:Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class NewsHolder1(v: View) : RecyclerView.ViewHolder(v){
         var imgIconMask: ImageView = itemView!!.findViewById(R.id.imgIconMask)
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
-        var txtDesc: TextView = itemView!!.findViewById(R.id.txtDesc)
+        var txtDesc: TextView = itemView!!.findViewById(R.id.txtCategory)
         var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)
         var constraintLayoutP: ConstraintLayout = itemView!!.findViewById(R.id.constraintLayoutP)
 
@@ -67,7 +66,6 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
     inner public class LoadingHolder(v: View) : RecyclerView.ViewHolder(v)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
         if (viewType == Constant.VIEW_TYPE_ITEM) {
             return NewsHolder1(
                 LayoutInflater.from(parent.context).inflate(
@@ -118,6 +116,10 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
     override fun getItemViewType(position: Int): Int {
         if (mList[position] == "loading") {
             return Constant.VIEW_TYPE_LOADING
+        }
+
+        if(isRelative) {
+            return Constant.VIEW_TYPE_ITEM
         }
 
         val jObject = mList[position]

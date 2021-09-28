@@ -16,6 +16,9 @@
     <color name="descnewscolor">#B1B1B1</color>
     <color name="mainredcolor">#F93E1F</color>
 
-    <color name="transparent"></color>
+    <color name="transparent">#FFFFFFFF</color>
+
+
+    <color name="contentdetailnews">#252525</color>
 
 </resources>

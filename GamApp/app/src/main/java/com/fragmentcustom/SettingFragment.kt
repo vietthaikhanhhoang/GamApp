@@ -1,19 +1,16 @@
 package com.fragmentcustom
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.barservicegam.app.MainActivity
+import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
-import com.bumptech.glide.util.Util
-import com.dialog.LoginFragment
+import com.fragula.extensions.addFragment
 import com.lib.Utils
 import data.DataPreference
 import data.PREFERENCE
@@ -64,9 +61,10 @@ class SettingFragment : Fragment() {
             if(accountUser !is JSONObject) {
                 val topActivity = Utils.getActivity(requireContext())
                 if(topActivity is MainActivity) {
-                    val fm = topActivity.supportFragmentManager
-                    val loginFragment = LoginFragment.newInstance("", "")
-                    loginFragment.show(fm, "login")
+                    addFragment<LoginFragment> {
+                        ARG_PARAM1 to ""
+                        ARG_PARAM2 to ""
+                    }
                 }
             }
         }
