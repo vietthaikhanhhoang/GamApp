@@ -29,8 +29,6 @@ class LoginFragment : DialogFragment() {
 
     lateinit var signInButton: SignInButton
 
-    var gotoConfirmOTP: (() -> Unit)? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -82,7 +80,6 @@ class LoginFragment : DialogFragment() {
             //Toast.makeText(this.context, "hello", Toast.LENGTH_SHORT).show()
 
             dismiss()
-            gotoConfirmOTP?.invoke()
         }
 
 

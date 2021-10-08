@@ -21,6 +21,7 @@
     <string name="title_activity_bottom_nav">MainActivity</string>
     <string name="news">Tin tức</string>
     <string name="video">Video</string>
+    <string name="ball">Bóng đá</string>
     <string name="explore">Khám phá</string>
     <string name="setting">Cài đặt</string>
     <string name="title_activity_infiniti">InfinitiActivity</string>

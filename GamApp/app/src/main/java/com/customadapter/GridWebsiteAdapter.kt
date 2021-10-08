@@ -15,7 +15,7 @@ class GridWebsiteAdapter(var mList: JSONArray) : RecyclerView.Adapter<RecyclerVi
     var arrMore: ArrayList<Int> = ArrayList<Int>()
 
     class GridHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
         var grdWebsite: RecyclerView = itemView!!.findViewById(R.id.grdWebsite)
         var btnMore: Button = itemView!!.findViewById(R.id.btnMore)
     }

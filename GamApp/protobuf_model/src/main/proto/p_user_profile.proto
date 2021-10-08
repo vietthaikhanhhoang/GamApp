@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package model;
+
+import "p_googleads.proto";
+
+// import "p_topic.proto";
+
+
+//ReferralMsg define referral
+message ReferralMsg {
+  int32 id = 1; // user được cài đặt từ nguồn nào
+  string name = 2; // tên hiển thị dưới app .
+}
+
+//PreferMsg define danh sách các categories mà user lựa chọn.
+message PreferMsg {
+  int32 id = 1; // user được cài đặt từ nguồn nào
+  string name = 2; // tên hiển thị dưới app .
+}
+
+message provinceMsg {
+  int32 id = 1; // id thành phố
+  string name =2; // tên thành phố
+}
+
+message listProvinceMsg {
+  repeated provinceMsg provinces = 1; // list danh sách province
+}
+
+message districtMsg {
+  int32 id = 1;               //id của quận huyện
+  int32 province_id = 2;          // id thành phố
+  string name =3;             // tên huyện
+}
+
+message listDistrictMsg {
+  repeated districtMsg districts = 1; // list danh sách district
+}
+
+message wardMsg {
+  int32 id = 1;                // id của phường xã 
+  int32 province_id = 2;          // id thành phố
+  int32 district_id = 3;        // id của huyện
+  string name =4;              // tên phường xã
+}
+
+message listWardMsg {
+  repeated wardMsg wards = 1; // list danh sách wards
+}
+
+//phase 15 : sử dụng cho UGC
+message UGCAuthor {
+  string author_id = 1;      // id của author 
+  AuthorType author_role = 2;  // id của tác giả
+  string author_name = 3;    // tên của tác giả
+  string author_avatar = 4;  // avatar của tác giả, support jpg, png, tối đa 200kb
+  string author_cover = 5;  // ảnh nền của tác giả, support jpg, png, tối đa 200kb
+  string author_summary = 6;  // thông tin tóm tắt của KOL, user.
+  int32 total_follower = 7; // tổng số người follow
+  int32 total_follow = 8;   // tổng số người mà author follow
+  int32 total_like = 9;     // tổng số like của tác giả
+  int32 total_comment = 10;  // tổng số comment của tác giả
+  int32 total_post = 11; // tổng số bài viết của author
+  GoogleAdsMsg detail_ads = 12; //config cho KOL có phần google ads (banner, native)
+  GoogleAdsMsg video_preroll_ads = 13; //config cho KOL có phần ads cho preroll
+  enum AuthorType {
+    NORMAL_TYPE = 0; // kiểu user normal - ko phải là user bóng đá
+    ADMIN_TYPE = 1;  // kiểu admin  
+    MOD_TYPE = 2;    // author là mod viết bài
+    KOL_TYPE = 3; // kiểu editor (KOL)  --> có tích xanh
+    EDTIOR_TYPE = 4; // kiểu user là user bóng đá, có thể viết bài, có wall trong cá nhân như KOL  --> ko có tích xanh
+  }
+  string author_link = 14; // sử dụng để share link hoặc dynamic link
+}
+
+//UserMsg define user message
+message UserProfileMsg {
+  string device_id = 1;               // deviceID của user
+  string referral = 2;                // user được cài đặt từ nguồn nào
+  string phone = 3;                   // số điện thoại của user. 
+  string email = 4;                   // email 
+  string fb_id = 5;                   //fb ID
+  string fb_name = 6;                 //Tên của user trên fb
+  int32 gender = 7;                   // giới tính : 1 - Nữ, 2 - Nam, 3 - other
+  int64 bthday = 8;                   // Ngày tháng năm sinh, convert sang unix milisecond
+  string fullname = 9;                // tên đầy đủ của user.
+  repeated int32 prefer_cats = 10;    // Categories mà user lựa chọn, cách nhau bởi dấu
+  string address = 11;              // thông tin địa chỉ của user 
+  provinceMsg province = 12;        // thành phố 
+  districtMsg district = 13;        // quận, huyện
+  wardMsg ward = 14;                // xã phường
+  //phase 15
+  UGCAuthor author_me = 15;               // ugc - trường này cho phép control user 
+  repeated UGCAuthor auth_follow = 16;    // thông tin device follow một list các author
+  repeated UGCAuthor auth_hidden = 17;    // thông tin device hidden một list các author
+}

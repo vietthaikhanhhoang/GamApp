@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imgWebsite" />
 
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/txtStar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -52,7 +52,7 @@
         android:layout_marginTop="8dp"
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+        app:layout_constraintTop_toBottomOf="@+id/txtStar"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -63,7 +63,7 @@
         android:layout_marginTop="8dp"
         android:text="Tuổi trẻ xã hội"
         app:layout_constraintStart_toEndOf="@+id/imgWebsite"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/txtStar" />
 
     <ImageView
         android:id="@+id/imgCover"

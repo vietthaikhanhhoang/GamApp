@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//ENoticeType define kiểu nhảy vào topic hay event
+enum ENoticeType {
+    EN_NOTHING = 0;     // ko nhảy đi đâu cả 
+    EN_EVENT = 1;       // nhảy vào event 
+    EN_TOPIC = 2;       // nhảy vào topic 
+    EN_WEBVIEW = 3;       // nhảy ra webview in app với jump_id là url link
+    EN_ENABLE_PUSH = 4;       // nhảy vào màn hình setting -> enable push . User enable push thì client sẽ đẩy lên server.
+}
+
+//NoticeMsg define id, icon, title của các cate trong bóng đá
+message NoticeMsg {
+    int32 id = 1;           // id của notice
+    string title = 2;       // title 
+    string icon = 3;       // ảnh icon 
+    string desc = 4;        // mô tả 
+    ENoticeType type = 5;   // kiểu nhảy 
+    string jump_id = 6;     //id để client call lên API event hoặc topic hoặc url
+}

@@ -76,7 +76,7 @@ object Global {
     fun getHeaderMap(): Map<String, String> {
         val headerMap = mutableMapOf<String, String>()
         headerMap["device_id"] = "0ef50568-d402-472f-994e-bea239532a90"
-        headerMap["APP_VERSION"] = "1.0.89"
+        headerMap["APP_VERSION"] = "1.0.91"
         headerMap["APP_ID"] = "tinhay"
         headerMap["TOKEN"] = "8cd7ac6bebe1255d96ee4353339b4641"
         headerMap["Content-Type"] = "application/json; charset=UTF-8"
@@ -88,7 +88,7 @@ object Global {
     fun getNameWebsite(websiteID: Int, context: Context) : String {
         var name = "Tin Mới 24h"
         val sharedPreference: DataPreference = DataPreference(context)
-        var mapIDNameWebsite = sharedPreference.getValueMap(PREFERENCE.MAPIDNAMEWEBSITE)
+        var mapIDNameWebsite = sharedPreference.getValueJObjectMap(PREFERENCE.MAPIDNAMEWEBSITE)
         if(mapIDNameWebsite.containsKey(websiteID)) {
             return mapIDNameWebsite?.get(websiteID).toString()
         }

@@ -1,13 +1,19 @@
 package com.fragmentcustom
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import com.barservicegam.app.R
 import com.fragula.extensions.addFragment
+import com.lib.Utils
+import com.main.app.MainActivity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,6 +31,9 @@ class LoginFragment : Fragment() {
     private var param2: String? = null
     lateinit var btnPhone: Button
 
+    lateinit var tfPhone: EditText
+    lateinit var imgClose: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -40,11 +49,49 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login, container, false)
         btnPhone = view.findViewById(R.id.btnPhone)
+        tfPhone = view.findViewById(R.id.tfPhone)
+        imgClose = view.findViewById(R.id.imgClose)
+
+        imgClose.setOnClickListener {
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.actionBack()
+            }
+        }
 
         btnPhone.setOnClickListener{
-            addFragment<ConfirmOTP> {
-                ARG_PARAM1 to ""
-                ARG_PARAM2 to ""
+            if(tfPhone.length() > 0) {
+                val topActivity = Utils.getActivity(requireContext())
+                if(topActivity is MainActivity) {
+                    topActivity.loginPhone(tfPhone.text.toString())
+                    topActivity.setTheCallBack {
+                        if(it != "") {
+                            //Log.d("vietnb", "sau khi login xong")
+                            addFragment<ConfirmOTP> {
+                                ARG_PARAM1 to it
+                                ARG_PARAM2 to ""
+                            }
+                        } else {
+                            Toast.makeText(this.context, "Lỗi xác thực SĐT", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        val btnLoginFacebook = view.findViewById<Button>(R.id.btnLoginFacebook)
+        btnLoginFacebook.setOnClickListener{
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.loginFacebook()
+            }
+        }
+
+        var btnLoginGoogle = view.findViewById<Button>(R.id.btnLoginGoogle)
+        btnLoginGoogle.setOnClickListener{
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.loginGoogle()
             }
         }
 

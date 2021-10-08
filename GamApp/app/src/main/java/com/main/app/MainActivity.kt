@@ -19,7 +19,10 @@ import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.fragmentcustom.*
+import com.fragmentcustom.football.BallPagerFragment
+import com.fragmentcustom.football.dddbtk.MatchDetailFragment
 import com.fragula.Navigator
+import com.fragula.extensions.addFragment
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -35,6 +38,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.lib.*
 import com.lib.eventbus.EventBusFire
+import com.testfragment.Test3Fragment
+import com.testfragment.Test4Fragment
 import data.DataPreference
 import data.PREFERENCE
 import org.greenrobot.eventbus.EventBus
@@ -42,7 +47,16 @@ import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+import model.*
+
+typealias CallBackAfterVerifyPhone = (String)-> Unit
+
 class MainActivity : AppCompatActivity() {
+    var callBackVerifyPhone: CallBackAfterVerifyPhone? = null
+
+    fun setTheCallBack(callBackVerifyPhone: CallBackAfterVerifyPhone) {
+        this.callBackVerifyPhone = callBackVerifyPhone
+    }
 
     //google
     private lateinit var auth: FirebaseAuth
@@ -55,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var navigatorTabNews: Navigator
     lateinit var navigatorTabVideos: Navigator
+    lateinit var navigatorTabBall: Navigator
     lateinit var navigatorTabExplore: Navigator
     lateinit var navigatorTabSetting: Navigator
 
@@ -63,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     var homePagerFragment = HomePagerFragment.newInstance("", "")
     var listVideoFragment = VideoPagerFragment.newInstance("", "")
+    var ballPagerFragment = BallPagerFragment.newInstance("", "")
     var exploreFragment = AutoSearchFragment.newInstance("", "")
     var settingFragment = SettingFragment.newInstance("", "")
 
@@ -81,6 +97,13 @@ class MainActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
         }
+        else if(bottomView.selectedItemId == R.id.navigation_ball) {
+            if (navigatorTabBall.fragmentCount > 1) {
+                navigatorTabBall.goToPreviousFragmentAndRemoveLast()
+            } else {
+                super.onBackPressed()
+            }
+        }
         else if(bottomView.selectedItemId == R.id.navigation_explore) {
             if (navigatorTabExplore.fragmentCount > 1) {
                 navigatorTabExplore.goToPreviousFragmentAndRemoveLast()
@@ -95,6 +118,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun actionHomeTab(){
+        if(bottomView.selectedItemId == R.id.navigation_news) {
+            navigatorTabNews.goToPosition(0, false)
+        }
+        else if(bottomView.selectedItemId == R.id.navigation_video) {
+            navigatorTabVideos.goToPosition(0, false)
+        }
+        else if(bottomView.selectedItemId == R.id.navigation_ball) {
+            navigatorTabBall.goToPosition(0, false)
+        }
+        else if(bottomView.selectedItemId == R.id.navigation_explore) {
+            navigatorTabExplore.goToPosition(0, false)
+        } else if(bottomView.selectedItemId == R.id.navigation_setting) {
+            navigatorTabSetting.goToPosition(0, false)
+        }
     }
 
     override fun onBackPressed() {
@@ -151,7 +191,7 @@ class MainActivity : AppCompatActivity() {
                 } else if (e is FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
                 }
-                Toast.makeText(this@MainActivity, "Lỗi xác thực SĐT", Toast.LENGTH_SHORT).show()
+                callBackVerifyPhone?.invoke("")
             }
 
             override fun onCodeSent(
@@ -165,9 +205,10 @@ class MainActivity : AppCompatActivity() {
 
                 /////Tao credetal va signIn
                 //user se nhap otp va goi ham nay vao: hien tai fake luon cho nhanh
-                verifyPhoneNumberWithCode(verificationId, "888888")
+                //verifyPhoneNumberWithCode(verificationId, "888888")
+                callBackVerifyPhone?.invoke(verificationId)
             }
-    }
+        }
 
         OrientationUtils.lockOrientationPortrait(this)
         setContentView(R.layout.activity_main2)
@@ -189,6 +230,7 @@ class MainActivity : AppCompatActivity() {
         layoutParent = findViewById(R.id.layoutParent)
         navigatorTabNews = findViewById(R.id.navigatorTabNews)
         navigatorTabVideos = findViewById(R.id.navigatorTabVideos)
+        navigatorTabBall = findViewById(R.id.navigatorTabBall)
         navigatorTabExplore = findViewById(R.id.navigatorTabExplore)
         navigatorTabSetting = findViewById(R.id.navigatorTabSetting)
 
@@ -210,6 +252,7 @@ class MainActivity : AppCompatActivity() {
 
             navigatorTabNews.addFragment(homePagerFragment)
             navigatorTabVideos.addFragment(listVideoFragment)
+            navigatorTabBall.addFragment(ballPagerFragment)
             navigatorTabExplore.addFragment(exploreFragment)
             navigatorTabSetting.addFragment(settingFragment)
         } else {
@@ -238,6 +281,40 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun selectItemIdBottom(index: Int) {
+        if(index == 0) {
+            navigatorTabNews.visibility = View.VISIBLE
+            navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
+            navigatorTabExplore.visibility = View.INVISIBLE
+            navigatorTabSetting.visibility = View.INVISIBLE
+        } else if(index == 1) {
+            navigatorTabNews.visibility = View.INVISIBLE
+            navigatorTabVideos.visibility = View.VISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
+            navigatorTabExplore.visibility = View.INVISIBLE
+            navigatorTabSetting.visibility = View.INVISIBLE
+        } else if(index == 2) {
+            navigatorTabNews.visibility = View.INVISIBLE
+            navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.VISIBLE
+            navigatorTabExplore.visibility = View.INVISIBLE
+            navigatorTabSetting.visibility = View.INVISIBLE
+        } else if(index == 3) {
+            navigatorTabNews.visibility = View.INVISIBLE
+            navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
+            navigatorTabExplore.visibility = View.VISIBLE
+            navigatorTabSetting.visibility = View.INVISIBLE
+        } else if(index == 4) {
+            navigatorTabNews.visibility = View.INVISIBLE
+            navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
+            navigatorTabExplore.visibility = View.INVISIBLE
+            navigatorTabSetting.visibility = View.VISIBLE
+        }
+    }
+
     private fun setBottomBarListener() {
         bottomView.setOnNavigationItemSelectedListener {
 
@@ -247,10 +324,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun selectTab(tabId: Int) = when (tabId) {
+    fun selectTab(tabId: Int) = when (tabId) {
         R.id.navigation_news -> {
             navigatorTabNews.visibility = View.VISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
             true
@@ -258,6 +336,15 @@ class MainActivity : AppCompatActivity() {
         R.id.navigation_video -> {
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.VISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
+            navigatorTabExplore.visibility = View.INVISIBLE
+            navigatorTabSetting.visibility = View.INVISIBLE
+            true
+        }
+        R.id.navigation_ball -> {
+            navigatorTabNews.visibility = View.INVISIBLE
+            navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.VISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
             true
@@ -265,6 +352,7 @@ class MainActivity : AppCompatActivity() {
         R.id.navigation_explore -> {
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.VISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
             true
@@ -272,6 +360,7 @@ class MainActivity : AppCompatActivity() {
         R.id.navigation_setting -> {
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
+            navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.VISIBLE
             true
@@ -316,6 +405,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("vietnb", "signInWithCredential:success")
                     val user = auth.currentUser
                     updateUI(user)
+                    actionHomeTab()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("vietnb", "signInWithCredential:failure", task.exception)
@@ -343,7 +433,7 @@ class MainActivity : AppCompatActivity() {
             avatar = user.photoUrl.toString()
 
             if(name == null || name.isEmpty() || name == "null") {
-                name = "SĐT"
+                name = "Anonymouz"
             }
         }
 
@@ -487,6 +577,7 @@ class MainActivity : AppCompatActivity() {
                 sharedPreference.save(PREFERENCE.ACCOUNTUSER, jObject.toString())
                 EventBus.getDefault().post(EventBusFire("loginSuccess", valueString = ""))
                 settingFragment.refreshDataAccountUser()
+                actionHomeTab()
 
             }).executeAsync()
     }
@@ -536,6 +627,7 @@ class MainActivity : AppCompatActivity() {
                     val user = task.result?.user
                     //lay duoc thong tin user
                     updateUI(user)
+                    actionHomeTab()
 
                 } else {
                     // Sign in failed, display a message and update the UI
@@ -548,7 +640,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
+    fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
         // [START verify_with_code]
         val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
         signInWithPhoneAuthCredential(credential)
@@ -571,5 +663,4 @@ class MainActivity : AppCompatActivity() {
         }
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
     }
-
 }

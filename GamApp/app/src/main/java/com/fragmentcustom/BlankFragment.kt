@@ -44,7 +44,7 @@ class BlankFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_blank, container, false)
         btnNext = view.findViewById(R.id.btnNext)
-        txtTitle = view.findViewById(R.id.txtTitle)
+        txtTitle = view.findViewById(R.id.txtStar)
 
         param1?.let {
             var str = txtTitle.text as String

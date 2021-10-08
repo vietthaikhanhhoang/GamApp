@@ -92,7 +92,7 @@ class ListActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             // Do the POST request and get response
 //            val response = service.createEmployee(getHeaderMap(), requestBody)
-            val response = service.getListNews("0", "0", 0, getHeaderMap())
+            //val response = service.getListNews(null, "0", 0, getHeaderMap())
 
 //            withContext(Dispatchers.Main) {
 //                if (response.isSuccessful) {

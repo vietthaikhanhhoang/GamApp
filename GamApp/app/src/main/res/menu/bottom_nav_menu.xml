@@ -10,6 +10,10 @@
         android:id="@+id/navigation_video"
         android:icon="@drawable/bottom_videoicon_selector"
         android:title="@string/video" />
+    <item
+        android:id="@+id/navigation_ball"
+        android:icon="@drawable/bottom_ballicon_selector"
+        android:title="@string/ball" />
 
     <item
         android:id="@+id/navigation_explore"

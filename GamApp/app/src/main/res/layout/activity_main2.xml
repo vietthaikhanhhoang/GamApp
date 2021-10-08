@@ -29,6 +29,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.fragula.Navigator
+        android:visibility="invisible"
+        android:id="@+id/navigatorTabBall"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/navigatorTabExplore"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.fragula.Navigator
         android:id="@+id/navigatorTabExplore"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -51,6 +61,7 @@
     </com.fragula.Navigator>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:visibility="gone"
         app:tabRippleColor="@null"
 
         app:labelVisibilityMode="labeled"

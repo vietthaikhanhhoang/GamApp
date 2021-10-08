@@ -12,6 +12,7 @@ import com.api.APIService
 import com.api.Global
 import com.barservicegam.app.R
 import com.customadapter.ListNewsAdapter
+import com.customview.BottomView
 import com.fragula.extensions.addFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.GsonBuilder
@@ -67,6 +68,8 @@ class VideoPagerFragment : Fragment() {
     lateinit var viewPager: ViewPager2
     lateinit var tab_layout: TabLayout
 
+    lateinit var bottomView:BottomView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -81,6 +84,9 @@ class VideoPagerFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_video_pager, container, false)
+
+        bottomView = view.findViewById(R.id.bottomView)
+        bottomView.setViewTab(1)
 
         tab_layout = view.findViewById(R.id.tab_layout)
         viewPager = view.findViewById(R.id.viewPager)

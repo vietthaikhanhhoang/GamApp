@@ -26,7 +26,7 @@ class ChildView @JvmOverloads constructor(
 
     private fun init(attrs: AttributeSet?) {
         val view = View.inflate(context, R.layout.child_holder, this)
-        txtTitle = view.findViewById(R.id.txtTitle)
+        txtTitle = view.findViewById(R.id.txtStar)
         imgCover = view.findViewById(R.id.imgCover)
     }
 

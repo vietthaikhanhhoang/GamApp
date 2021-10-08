@@ -10,16 +10,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.api.APIService
 import com.api.Global
 import com.barservicegam.app.R
 import com.customadapter.ListNewsAdapter
+import com.customadapter.ball.ListTitleGuessMatchAdapter
 import com.fragula.extensions.addFragment
 import com.fragula.extensions.replaceFragment
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import com.khaolok.myloadmoreitem.OnLoadMoreListener
 import com.khaolok.myloadmoreitem.RecyclerViewLoadMoreScroll
+import com.testfragment.Test3Fragment
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,6 +37,10 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+import model.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,12 +59,16 @@ class HomeFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var category: String? = null
+    private var isBall24H: Boolean? = null
 
     var listNewsAdapter = ListNewsAdapter(JSONArray())
     lateinit var rclView: RecyclerView
     val arrNews = JSONArray()
 
+    var sid:Int? = null
+
     lateinit var scrollListener: RecyclerViewLoadMoreScroll
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +76,7 @@ class HomeFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
             category = it.getString(ARG_PARAM3)
+            isBall24H = it.getBoolean(ARG_PARAM4)
         }
     }
 
@@ -73,6 +88,8 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         rclView = view.findViewById(R.id.rclView)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener(refreshListener)
 
         var mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this.context)
         rclView.layoutManager = mLayoutManager
@@ -91,23 +108,45 @@ class HomeFragment : Fragment() {
         return view
     }
 
+    private val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+        swipeRefreshLayout.isRefreshing = true
+        // call api to reload the screen
+        refreshData()
+    }
+
     fun refreshData() {
-        val retrofit:APIService = Retrofit.Builder()
+        var retrofit:APIService = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://api.appnews24h.com")
             .build()
             .create(APIService::class.java)
 
+        var response: Call<ResponseBody>? = null
+
+        var categoryname = ""
+        if(isBall24H == false) {
 //        Log.d("vietnb", "khi vao day kiem tra cate:" + category.toString())
-        var cid:String = "999"
-        val categoryJSON = JSONObject(category)
-        if(categoryJSON.has("id")) {
-            cid = categoryJSON.getString("id")
+            var cid:String = "999"
+            val categoryJSON = JSONObject(category)
+            if(categoryJSON.has("id")) {
+                cid = categoryJSON.getString("id")
+            }
+            if(categoryJSON.has("category")) {
+                categoryname = categoryJSON.getString("name")
+            }
+
+            if(!param1.isNullOrEmpty()) {
+                sid = param1!!.toInt()
+            }
+
+            response = retrofit.getListNews(sid, cid,"0", 0, Global.getHeaderMap())
+        } else {
+            response = retrofit.getBallNews(null, null, Global.getHeaderMap())
         }
 
-        val response = retrofit.getListNews(cid,"0", 0, Global.getHeaderMap())
-        response.enqueue(object : retrofit2.Callback<ResponseBody>{
+        response!!.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
 
                     val gson = GsonBuilder().setPrettyPrinting().create()
@@ -140,11 +179,6 @@ class HomeFragment : Fragment() {
                                 rclView.adapter = listNewsAdapter
                                 listNewsAdapter.setListNewsAdapterListener(object : ListNewsAdapter.ListNewsAdapterListener{
                                     override fun click_ListNewsAdapterListener(position: Int) {
-                                        var categoryname = ""
-                                        if(categoryJSON.has("category")) {
-                                            categoryname = categoryJSON.getString("name")
-                                        }
-
                                         val jObject = JSONObject(arrNews[position].toString())
                                         val doc = jObject.getJSONObject("Doc")
                                         val art = doc.getJSONObject("Art")
@@ -168,6 +202,7 @@ class HomeFragment : Fragment() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 //                Log.d("vietnb", "co loi xay ra")
+                swipeRefreshLayout.isRefreshing = false
             }
 
         })
@@ -188,14 +223,21 @@ class HomeFragment : Fragment() {
             .build()
             .create(APIService::class.java)
 
-        var cid:String = "999"
-        val categoryJSON = JSONObject(category)
-        if(categoryJSON.has("id")) {
-            cid = categoryJSON.getString("id")
+        var response: Call<ResponseBody>? = null
+        var categoryname = ""
+        if(isBall24H == false) {
+            var cid:String = "999"
+            val categoryJSON = JSONObject(category)
+            if(categoryJSON.has("id")) {
+                cid = categoryJSON.getString("id")
+            }
+
+            response = retrofit.getListNews(sid, cid, lid, arrNews.length(), Global.getHeaderMap())
+        } else {
+            response = retrofit.getBallNews(lid, arrNews.length(), Global.getHeaderMap())
         }
 
-        val response = retrofit.getListNews(cid, lid, arrNews.length(), Global.getHeaderMap())
-        response.enqueue(object : retrofit2.Callback<ResponseBody>{
+        response!!.enqueue(object : retrofit2.Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.d("vietnb", "successful")
                 listNewsAdapter.removeLoadingView()
@@ -260,13 +302,103 @@ class HomeFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String, category: String) =
+        fun newInstance(param1: String, param2: String, category: String, isBall: Boolean) =
             HomeFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
                     putString(ARG_PARAM3, category)
+                    putBoolean(ARG_PARAM4, isBall)
                 }
             }
     }
+
+    ///protobuf
+//    fun refreshDataProtobuf() {
+//        var retrofit: APIService = Retrofit.Builder()
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .baseUrl("https://api.appnews24h.com")
+//            .build()
+//            .create(APIService::class.java)
+//
+//        var response: Call<ResponseBody>? = null
+//        response = retrofit.getListGuessMatch(Global.getHeaderMap())
+//
+//        response!!.enqueue(object : retrofit2.Callback<ResponseBody>{
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                if (response.isSuccessful) {
+//
+//                    if(response.body() != null) {
+//                        val responseBody = response.body()
+//                        if (responseBody != null) {
+//                            model.PGame.GListFootBallMatchs.parseFrom(responseBody.byteStream())
+//                            return@map Person.parseFrom(responseBody.byteStream())
+//                        }
+//
+//                        //val personList = model.PGame.GListFootBallMatchs.parseFrom(response.body().byteStream())//model..parseFrom(response.body().byteStream())
+//                        val a = model.PGame.GListFootBallMatchs.parseFrom(response.body()!!.bytes()!!)
+//                    }
+//
+////                    val gson = GsonBuilder().setPrettyPrinting().create()
+////                    val prettyJson = gson.toJson(
+////                        JsonParser.parseString(
+////                            response.body()
+////                                ?.string() // About this thread blocking annotation : https://github.com/square/retrofit/issues/3255
+////                        )
+////                    )
+////
+////                    val jsonObject = JSONObject(prettyJson)
+////                    if(jsonObject != null)
+////                    {
+////                        if (jsonObject.get("code").toString() == "200")
+////                        {
+////                            //Log.d("Pretty Printed JSON :", "hay vao day")
+////                            if (jsonObject.getJSONArray("football_match") != null)
+////                            {
+////                                val linfos = jsonObject.getJSONArray("football_match")
+////                                for (i in 0 until linfos.length()) {
+////                                    val infos = JSONObject(linfos[i].toString())
+////                                    arrNews.put(infos)
+////                                }
+////                                listTitleGuessMatchAdapter = ListTitleGuessMatchAdapter(arrNews)
+////                                rclView.adapter = listTitleGuessMatchAdapter
+////                            }
+////                        }
+////                    }
+//
+//                } else {
+//                    Log.e("RETROFIT_ERROR", response.code().toString())
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+////                Log.d("vietnb", "co loi xay ra")
+//            }
+//
+//        })
+//    }
+
+    fun refreshDataProtobuf(){
+
+    }
+
+    private val okHttpClient = OkHttpClient()
+
+    private val observable = Observable.just("http://elyeproject.x10host.com/experiment/protobuf")
+        .map{
+            val request = Request.Builder().url(it).build()
+            val call = okHttpClient.newCall(request)
+            val response = call.execute()
+
+            if (response.isSuccessful) {
+                val responseBody = response.body
+                if (responseBody != null) {
+//                    model.PWhatnews.whatNewsMsg.parseFrom(responseBody.byteStream())
+//                    model.PWhatnews.whatNewsResponse.parseFrom(responseBody.byteStream())
+//                    return@map model.PWhatnews.whatNewsMsg.parseFrom(responseBody.byteStream())
+                }
+            }
+            return@map null
+
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }

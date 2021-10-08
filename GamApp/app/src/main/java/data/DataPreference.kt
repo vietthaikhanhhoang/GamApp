@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonDeserializer
 import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Type
 
@@ -24,6 +25,8 @@ object PREFERENCE {
     const val MAPIDNAMEWEBSITE = "MAPIDNAMEWEBSITE"
 
     const val ARRAYCATEGORYVIDEO = "ARRAYCATEGORYVIDEO"
+
+    const val MAPIDNAMECOVERWEBSITE = "MAPIDNAMECOVERWEBSITE"
 }
 
 class DataPreference(val context: Context) {
@@ -84,7 +87,18 @@ class DataPreference(val context: Context) {
         editor.commit()
     }
 
-    fun getValueMap(KEY_NAME: String): Map<Int, String> {
+//    fun saveMapIntJArray(KEY_NAME: String, value: Map<Int, String>) {
+//        val editor: SharedPreferences.Editor = sharedPref.edit()
+//
+//        val gson = Gson()
+//        val strValue = gson.toJson(value).toString()
+//        val jsonArray = JSONObject(strValue)
+//        val jsonString = jsonArray.toString()
+//        editor.putString(KEY_NAME, jsonString)
+//        editor.commit()
+//    }
+
+    fun getValueJObjectMap(KEY_NAME: String): Map<Int, String> {
         val value = sharedPref.getString(KEY_NAME, "")!!
         if(value.isNotEmpty()) {
             val outputMap = mutableMapOf<Int, String>()
@@ -100,6 +114,24 @@ class DataPreference(val context: Context) {
         }
 
         return mutableMapOf<Int, String>()
+    }
+
+    fun getValueJArrayMap(KEY_NAME: String): Map<Int, JSONArray> {
+        val value = sharedPref.getString(KEY_NAME, "")!!
+        if(value.isNotEmpty()) {
+            val outputMap = mutableMapOf<Int, JSONArray>()
+            Log.d("vietnb", "gia tri value: $value")
+            val jsonObject = JSONObject(value)
+            val keysItr: Iterator<String> = jsonObject.keys()
+            while (keysItr.hasNext()) {
+                val key = keysItr.next()
+                outputMap[key.toInt()] = JSONArray(jsonObject.getString(key.toString()))
+            }
+
+            return outputMap
+        }
+
+        return mutableMapOf<Int, JSONArray>()
     }
 
 

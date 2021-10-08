@@ -328,7 +328,7 @@ class DetailNewsFragment : Fragment() {
 
         txtNative = view.findViewById(R.id.txtNative)
 
-        txtTitle = view.findViewById(R.id.txtTitle)
+        txtTitle = view.findViewById(R.id.txtStar)
         if(art.has("sid")) {
             val sid = art.getInt("sid")
             txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)

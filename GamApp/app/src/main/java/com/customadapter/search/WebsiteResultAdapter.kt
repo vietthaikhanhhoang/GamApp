@@ -15,7 +15,7 @@ import org.json.JSONObject
 
 class WebsiteResultAdapter(var mList: JSONArray) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class WebsiteResult(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
 
         fun bindData(data: JSONObject) {

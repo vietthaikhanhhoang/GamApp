@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//VotingAppMsg là 1 bản tin dạng voting - user click vào sẽ nhảy vào store của mỗi nền tảng.
+message VotingAppMsg {
+  enum EVotingType {
+    //EVotingType type tracking
+    NOTHING        = 0;
+    OUT_APP        = 1;   // bật webview nhảy ra ngoài app 
+    IN_APP         = 2;   // bật webview inapp
+  }
+  int32 id = 1;
+  string title = 2;
+  string cover = 3;
+  string jump_url = 4;
+  EVotingType type = 5;
+  
+}
+
+//lựa chọn option và các thông tin liên quan - do chế độ chưa lựa chọn 
+message PollOptions {
+  int32 opt_id = 1;           // lựa chọn option nào ?
+  string opt_name = 2;        // tên hiển thị ra ngoài: "có" hay "ko", "thắng" hay "thua",... ?
+  string opt_color_not_selected_bg = 3;    // background color button - chưa lựa chọn
+  string opt_color_not_selected_text = 4;  // color của text khi chưa lựa chọn
+  string opt_color_selected_bg = 5;  // color của text khi touch
+  string opt_color_selected_text = 6;  // color của text khi touch
+  int32 opt_count = 7;        // tổng số có bao nhiêu người chọn?
+} 
+//PollMsg là 1 bản tin dạng poll - cho phép user lựa chọn option, show kết quả.
+message PollMsg {
+    enum PollMsgJumpType {
+      //PollMsgJumpType type jump
+      NOTHING        = 0;   // click ko đi đâu cả 
+      DETAIL_SCREEN        = 1;   // jump vào màn hình screen đọc bài detail, call đến API detail
+      GAME_SCREEN         = 2;   // jump vào màn hình game (đang design)
+      TOPIC_SCREEN = 3;         // jump vào màn hình topic - call đến API topic detail
+      EVENT_SCREEN = 4;         // jump vào màn hình event - call đến API event detail 
+    }
+    int32 id = 1;       //id của poll 
+    string title = 2;   //title của poll 
+    repeated PollOptions options = 3; // lựa chọn các option 
+    int32 jump_enable = 4;           // có enable hướng dẫn ở dưới ko ?
+    string jump_text = 5;            // text hiển thị khi enable jump
+    PollMsgJumpType jump_type = 6;   //jump vào đâu ? màn hình đọc bài chi tiết ? màn hình game, màn hình topic, màn hình event. 
+    string jump_id = 7;               //jump vào màn hình chi tiết của kiểu poll
+    int64 total = 8;                  // tổng số người vote
+}
+
+//đẩy lựa chọn của user lên server để update lại tổng số
+message PostPollOption {
+  int32 poll_id = 1;
+  int32 poll_opt_id = 2;
+}

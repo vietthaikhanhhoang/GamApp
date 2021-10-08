@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//FootballCateMsg define id, icon, title của các cate trong bóng đá
+message FootballSubCateMsg {
+  int32 sub_id = 1;         // id của sub_cate 
+  string title = 2;         // title của cate 
+  string icon = 3;          // icon của cate 
+  int32 is_enabled = 4;     // có enable hay ko ?
+  int32 is_showed = 5;      // có show hay ko ?
+  int32 view_type = 6;      // có dạng view nào ? dạng video hay thường ?
+                            // 0 là dạng thường (giống tổng hợp), 1 là dạng video view, 2 là dạng webview
+  int32 parent_id = 7;      // parent ID
+  string url_webview = 8;   // url webview nếu có
+}
+
+message FootballMsg {
+  int32  parent_id = 1;        // id của parent cate
+  string title = 2;            // title của cate 
+  string icon = 3;             // icon của cate 
+  int32 is_enabled = 4;        // có enable hay ko ?
+  int32 is_showed = 5;         // có show hay ko ?
+  int32 view_type = 6;         // có dạng view nào ? dạng video hay thường ? 
+                               // 0 là dạng thường (giống tổng hợp), 1 là dạng video view, 2 là dạng webview
+  repeated FootballSubCateMsg  sub_cates = 7;
+  string url_webview = 8;   // url webview nếu có
+}
+
+
+//FootballResponses response
+message FootballResponses {       
+  int32 code = 1;
+  string desc = 2;
+  repeated FootballMsg data  = 3;   // data trả lại cho client
+}

@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.main.app.MainActivity
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
+import com.customview.BottomView
 import com.fragula.extensions.addFragment
 import com.lib.Utils
 import data.DataPreference
@@ -37,6 +38,8 @@ class SettingFragment : Fragment() {
     lateinit var txtDangNhap: TextView
     lateinit var layoutLogin:ConstraintLayout
 
+    lateinit var bottomView: BottomView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -52,6 +55,9 @@ class SettingFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
         layoutLogin = view.findViewById(R.id.layoutLogin)
+
+        bottomView = view.findViewById(R.id.bottomView)
+        bottomView.setViewTab(4)
 
         imgAvatar = view.findViewById(R.id.imgAvatar)
         layoutLogin.setOnClickListener{

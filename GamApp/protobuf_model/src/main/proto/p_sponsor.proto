@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//SponsorMsg định nghĩa tin dạng sponsor
+message SponsorMsg {
+  int32 id = 1; // client ko cần dùng trường này
+  string title = 2;
+  string desc = 3;
+  string cover = 4;
+  int32 weight = 5;   // client ko cần dùng trường này
+  string source_color = 6;
+  string source_text = 7;
+  string ads_source = 8;
+  string ads_source_color = 9;
+  string jump_url = 10;
+  
+}

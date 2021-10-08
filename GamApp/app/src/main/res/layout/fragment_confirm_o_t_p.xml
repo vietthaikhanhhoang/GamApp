@@ -47,7 +47,8 @@
             android:textSize="18sp" />
 
         <com.goodiebag.pinview.Pinview
-            android:id="@+id/pinview1"
+            app:textSize="13sp"
+            android:id="@+id/tfOTP"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:cursorVisible="false"
@@ -56,7 +57,7 @@
             app:inputType="number"
             app:password="false"
             app:pinHeight="40dp"
-            app:pinLength="4"
+            app:pinLength="6"
             app:pinWidth="40dp"/>
 
         <Button
@@ -95,4 +96,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgClose"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/back" />
 </FrameLayout>

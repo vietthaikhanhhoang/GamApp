@@ -16,6 +16,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:scaleType="fitXY" />
+            android:scaleType="centerCrop" />
     </LinearLayout>
 </LinearLayout>

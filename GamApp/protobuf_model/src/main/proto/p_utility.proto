@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package model;
+
+
+enum EUtilityType {
+  THOI_TIET = 0;
+  XO_SO = 1;
+  TY_GIA = 2;
+  PHONG_TUC = 3;
+  LICH_VIET = 4;
+  LE_HOI = 5;
+  HOANG_DAO = 6;
+  TU_VI = 7;
+  DANH_NGON = 8;
+  XEM_SAO = 9;
+  VAN_KHAN = 10;
+  XONG_DAT = 11;
+  FOOTBALL_GAME = 12; // trang thể thao
+  EVENT = 13 ; // nhảy vào event nào đó ?
+  TOPIC = 14 ; // nhảy vào topic nào đó
+}
+
+
+enum ESubTabType {
+  XS_MB = 0;  // nhảy vào xổ số miền bắc ở ngày trong trường date, date ko có thì vào ngày hiện tại 
+  XS_MT = 1;  // nhảy vào xổ số miền trung ở ngày trong trường date , date ko có thì vào ngày hiện tại
+  XS_MN = 2;  // nhảy vào xổ số miền nam ở ngày trong trường date , date ko có thì vào ngày hiện tại
+  LICH_VIET_NGAY = 3; // nhảy vào ngày trong trường date, ko có thì cho vào ngày hiện tại 
+  LICH_VIET_THANG = 4; // nhảy vào tháng trong trường date, ko có thì cho vào tháng hiện tại
+  FOOTBALL_GAME_NEWS  = 5; //nhảy vào tab tin tức trong chuyên trang bóng đá
+  FOOTBALL_GAME_BETTING  = 6; //nhảy vào tab dự đoán bóng đá trong chuyên trang bóng đá
+  FOOTBALL_GAME_COMMENT  = 7; //nhảy vào tab comment trong bóng đá
+  FOOTBALL_GAME_FANCLUB  = 8; //nhảy vào tab fanclub trong bóng đá 
+}
+
+//UtilityMsg define các tiện ích
+message UtilityMsg {
+  int32 id = 1;
+  string title = 2;
+  string cover = 3;
+  string desc = 4;
+  EUtilityType type = 5;
+  int32 weight = 6; // tỷ lệ random
+  ESubTabType sub_type = 7; //nhảy vào sub tab nào trong type
+  string date = 8; // ngày cần thiết khi nhảy vào subtype, format yyyymmdd , nếu là tháng sẽ là yyyymm
+  string jump_id = 9; // nếu là event hay topic, cần jumpID này để call API lấy data.
+                      // nếu type = 12, sub_type = 5 -> sẽ nhảy vào subcate : video 2light, Laliga,....
+  string sub_id = 10 ; // nếu type = 12, sub_type = 5 -> sẽ nhảy vào subcate : video 2light, Laliga,...., và sub_id sẽ thành video2light -> tổng hợp,....
+
+}

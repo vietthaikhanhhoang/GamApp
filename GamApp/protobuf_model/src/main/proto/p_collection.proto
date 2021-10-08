@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+
+package model;
+
+import "p_utility.proto";
+
+//CollectionMsg listing các tiện ích dạng webview, click nhảy vào webview
+message CollectionMsg {
+  int32 id = 1;
+  string title = 2;
+  repeated UtilityInfoMsg utilities = 3;
+}
+
+
+message UtilityInfoMsg {
+    int32 id = 1;
+    string title = 2;
+    string icon = 3;
+    int32 jump_type = 4;  // 1 : nhảy vào app, 2: nhảy sang webview
+    string jump_link = 5;   // trương hợp nhảy vào webview , sử dụng trường này
+    EUtilityType jump_app = 6; // nhảy vào trong app với kiểu tương ứng
+    ESubTabType jump_sub_app = 7; // nhảy vào tab đối với tiện ích tương ứng
+    string date = 8;  //ngày cần thiết khi nhảy vào subtype, format yyyymmdd , nếu là tháng sẽ là yyyymm
+    string jump_id = 9; // nếu là event hay topic, cần jumpID này để call API lấy data.
+    // nếu type = 12, sub_type = 5 -> sẽ nhảy vào subcate : video 2light, Laliga,....
+    string sub_id = 10 ; // nếu type = 12, sub_type = 5 -> sẽ nhảy vào subcate : video 2light, Laliga,...., và sub_id sẽ thành video2light -> tổng hợp,....
+
+  }

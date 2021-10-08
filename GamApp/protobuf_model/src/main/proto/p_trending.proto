@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//TrendingMsg định nghĩa các event dạng trực tiếp, khoảng khắc.
+message TrendingMsg {
+  string title = 1;
+  string cover = 2;
+  int32 wid = 3;
+  int64 posttime = 4;
+  repeated string listVideos = 5;
+  string collection_api = 6;
+  string comment_api = 7;
+}

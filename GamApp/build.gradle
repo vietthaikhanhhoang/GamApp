@@ -1,12 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = "1.4.32"
+    ext.protobuf_version = "3.0.0"
+
+//    ext {
+//        kotlin_version = '1.4.40'
+//        protobuf_version = "3.0.0"
+//    }
+
     repositories {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
     }
     dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.17'
+
         classpath 'com.google.gms:google-services:4.3.10' //init firebase
 
         classpath "com.android.tools.build:gradle:4.1.1"

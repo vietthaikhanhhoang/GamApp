@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//OlderArticleMsg dành cho các bài đã đọc, các bài đã boôkmark - client sẽ lấy trong db local
+message OlderArticleMsg {
+  string title = 1; // Bài đọc gần đây, Bài đã đánh dấu
+  int32 number_article = 2;  // số bài show lên trang tổng hợp - lấy từ db local
+}

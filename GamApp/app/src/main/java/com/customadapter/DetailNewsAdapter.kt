@@ -53,7 +53,7 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
     }
 
     inner class DetailNewsTitle(v: View) : RecyclerView.ViewHolder(v){
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
 
         init {
             val typeface = Typeface.createFromAsset(
@@ -310,7 +310,7 @@ public class DetailNewsAdapter(val context: Context) : RecyclerView.Adapter<Recy
             ///neu image la the dau tien thi top = 0
             var lp: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
             lp.setMargins(16.toPx(), 16.toPx(), 16.toPx(), 0)

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+package model;
+
+
+//LiveMsg định nghĩa các event dạng trực tiếp - chưa được define rõ ràng.
+message LiveMsg {
+  string title = 1;
+  string cover = 2;
+  int32 wid = 3;
+  int64 posttime = 4;
+  repeated string listVideos = 5;
+  string livescore_api = 6;
+  string comment_api = 7;
+}

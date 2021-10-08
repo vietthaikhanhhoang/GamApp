@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package model;
+
+import "p_user_profile.proto";
+import "p_game.proto";
+
+//phase 15
+message UGCContent {
+  enum CType {
+    NOTHING_TYPE = 0; // không hiển thị gì cả 
+    TEXT_TYPE = 1;  // kiểu text
+    IMAGE_TYPE = 2; // kiểu image
+    AUDIO_TYPE = 3; // kiểu audio
+    VIDEO_TYPE = 4; // kiểu video
+    ADS_TYPE = 5;   // kiểu quảng cáo banner, native trong bài (giống như bài detail)
+  }
+
+  enum CSUBType {
+    SUB_TYPE_TEXT_NORMAL = 0;  // kiểu text bình thường, support các thẻ inline như strong, em
+    SUB_TYPE_TEXT_AUTHOR = 1; //kiểu text mà là author --> bold đậm chữ lên
+    SUB_TYPE_TEXT_CAPTION = 2; //kiểu text mà là caption --> đẩy vào giữa màn hình, căn giữa , cỡ chữ nghiêng và nhỏ để làm caption cho ảnh phía trên
+    SUB_TYPE_VIDEO_NORMAL = 3; // kiểu video normal - dạng m3u8, mp4 
+    SUB_TYPE_VIDEO_YOUTUBE = 4; // kiểu video là youtube, cần bật webview của youtube lên. 
+    SUB_TYPE_VIDEO_FACEBOOK = 5; // kiểu video là facebook --> chưa sử dụng 
+    SUB_TYPE_VIDEO_TIKTOK = 6; // kiểu video là tiktok --> chưa sử dụng
+
+  }
+  CType c_type = 1;  // kiểu của content : image, video, audio, text
+  CSUBType c_sub_type = 2; // 
+  string c_content = 3; // nội dung tương ứng với kiểu.
+  int32 c_width = 4;  // chiều rộng với c_type là image hoặc video. Nếu = 0 ==> set = 100%
+  int32 c_height = 5; // chiều dài với c_type là image hoặc video. nếu = 0 ==> để mặc định là chiều dài của ảnh hoặc video
+  string c_thumb = 6; // nếu kiểu là video,hoặc audio sẽ có trường thumb tương ứng.
+  string duration = 7; // thêm độ dài của video hoặc audio, ko có sẽ hiển thị 03:30
+}
+
+//phase 15
+message mediaType {
+  enum CType {
+    NOTHING = 0; 
+    IMAGE_TYPE = 2; // kiểu image
+    AUDIO_TYPE = 3; // kiểu audio
+    VIDEO_TYPE = 4; // kiểu video
+  }
+  string thumb = 1; // link ảnh
+  CType type = 2; // type
+  
+}
+//phase 15
+//UGCMsg define user generate content
+message UGCMsg {
+  string ugcid = 1;       //ID của user gen content : ugc:{id_của_user}:{id_của_bài_post}
+  int64 posttime = 2;     //Time post bài
+  string fplayurl = 3;     //Link tinmoi  --> dùng để share link bài viết
+  string url = 4; // nếu được convert từ article thì sẽ có link gốc
+  string title = 5;       //title nếu có
+  repeated UGCContent content = 6;     //content của bài nếu có
+  string htmlcontent = 7; // dùng cho index vào solr, search check trùng
+  int32 sizeCmt = 8;     // số comment
+  int32 count_view = 9;             //số view của bài POST
+  int32 like = 10;             //số like của POST
+  int32 share = 11;       // số lượng bài được share
+  UGCAuthor author = 12;       // tên user, avatar, click cho follow, click vào detail của user
+  repeated string hashtags = 13; // các hashtag trong bài POST
+  GClub club = 14; // club liên quan
+  repeated mediaType listMedia = 15; // list thumb với type tương ứng
+
+}
+
+//phase 15
+//UgcLikeMsg sử dụng khi user like hoặc unlike
+message UgcLikeMsg {
+  enum UgcLikeType {
+    NOTHING = 0;
+    LIKE = 1;
+    UNLIKE = 2;
+  }
+  string fbID = 1; // facebook ID, appleID
+  string ugcid = 2; // id của ugc document
+  UgcLikeType action = 3; // action like or unlike
+}
+
+//phase 15
+//UgcShareMsg sử dụng khi user share bài thành công lên social, telegram,....
+message UgcShareMsg {
+  string fbID = 1; // facebook ID, appleID
+  string ugcid = 2; // id của ugc document - nếu là share document
+  string author_id = 3; // author ID - nếu kiểu share là share author 
+  SHARE_TYPE type = 4; // share trên kênh nào ?
+  enum SHARE_TYPE {
+    OTHER = 0; // ko biết share trên gì
+    FACEBOOK = 1; //share trên facebook
+    FBMSG = 2; //share trên faecbook msg 
+    TELEGRAM = 3; // share trên telegram 
+    ZALO = 4;  //share trên zalo
+    COPY_LINK = 5; //copy link
+    EMAIL = 6; //share trên email
+
+
+  }
+}
+
+//phase 15
+//UgcAuthorFollowMsg sử dụng khi user follow hoặc unfollow
+message UgcAuthorFollowMsg {
+  enum UgcAuthorFollowType {
+    NOTHING = 0;
+    FOLLOW = 1;     // Follow ông này
+    UN_FOLLOW = 2;  // ko follow ông này 
+    HIDDEN = 3; // ẩn các bài viết từ ông Author này
+    UN_HIDDEN = 4; // bỏ ẩn các bài viết
+  }
+  string fbID = 1; // nếu user FOLLOW có facebook ID, apple ID, ko có thì để rỗng 
+  string author_id = 2; //id của tác giả
+  UgcAuthorFollowType action = 3; //FOLLOW hoặc UNFOLLOW
+}

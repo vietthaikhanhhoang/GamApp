@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.barservicegam.app.R
+import com.customview.BottomView
 import com.lib.hideSoftKeyboard
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,6 +39,8 @@ class AutoSearchFragment : Fragment() {
 
     lateinit var layoutListWebsite: ConstraintLayout
 
+    lateinit var bottomView:BottomView
+
     val listWebsiteFragment = ListWebsiteFragment.newInstance("", "")
     val nestedGridViewFragment = NestedGridViewFragment.newInstance("", "")
 
@@ -58,6 +61,9 @@ class AutoSearchFragment : Fragment() {
         layoutParent = view.findViewById(R.id.layoutParent)
         txtSearch = view.findViewById(R.id.txtSearch)
         imgClose = view.findViewById(R.id.imgClose)
+        bottomView = view.findViewById(R.id.bottomView)
+
+        bottomView.setViewTab(3)
 
         layoutParent.setOnClickListener {
             this.hideSoftKeyboard()

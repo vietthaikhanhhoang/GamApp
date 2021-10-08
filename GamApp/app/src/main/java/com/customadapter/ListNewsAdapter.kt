@@ -22,7 +22,7 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
 
     inner class NewsHolder1(v: View) : RecyclerView.ViewHolder(v){
         var imgIconMask: ImageView = itemView!!.findViewById(R.id.imgIconMask)
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
         var txtDesc: TextView = itemView!!.findViewById(R.id.txtCategory)
         var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)

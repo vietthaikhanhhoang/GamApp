@@ -1,9 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-
-    id "com.google.protobuf" version "0.8.12"
 }
+
+//apply plugin: 'kotlin-android-extensions'//protobuf
 
 apply plugin: 'kotlin-kapt' //databinding
 apply plugin: 'com.google.gms.google-services' //init firebase
@@ -45,6 +45,13 @@ android {
 }
 
 dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation project(':protobuf_model')
+
     ///login google
     implementation 'com.github.GoodieBag:Pinview:v1.4'
 
@@ -84,9 +91,10 @@ dependencies {
 
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0' //dung cho load anh url
-    implementation "com.google.protobuf:protobuf-java:3.11.0"
+//    implementation "com.google.protobuf:protobuf-java:3.11.0"
 //    implementation  "androidx.datastore:datastore-core:1.0.0-alpha08"
 //    implementation  "com.google.protobuf:protobuf-javalite:3.10.0"
+//    implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
 
 //    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' //download file lich
     implementation 'org.greenrobot:eventbus:3.2.0'

@@ -1,11 +1,17 @@
 package com.fragmentcustom
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import com.barservicegam.app.R
+import com.goodiebag.pinview.Pinview
+import com.lib.Utils
+import com.main.app.MainActivity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,11 +28,16 @@ class ConfirmOTP : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var tfOTP:Pinview
+    lateinit var btnConfirm: Button
+    lateinit var imgClose: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+            //Log.d("vietnb", "verify 111: $param1")
         }
     }
 
@@ -35,7 +46,27 @@ class ConfirmOTP : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_confirm_o_t_p, container, false)
+        val view = inflater.inflate(R.layout.fragment_confirm_o_t_p, container, false)
+        tfOTP = view.findViewById(R.id.tfOTP)
+        btnConfirm = view.findViewById(R.id.btnConfirm)
+        imgClose = view.findViewById(R.id.imgClose)
+
+        imgClose.setOnClickListener {
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                topActivity.actionBack()
+            }
+        }
+
+        btnConfirm.setOnClickListener{
+            val topActivity = Utils.getActivity(requireContext())
+            if(topActivity is MainActivity) {
+                Log.d("vietnb", "verify: $param1")
+                topActivity.verifyPhoneNumberWithCode(param1, tfOTP.value)
+            }
+        }
+
+        return view
     }
 
     companion object {

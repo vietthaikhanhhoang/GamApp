@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package model;
+
+
+import "p_article.proto";
+
+enum ETopicType {
+    T_NOTHING = 0;
+    T_FOLLOW = 1; 
+    T_UNFOLLOW = 2;     //--> "Quan Tâm"
+
+}
+
+//TopicMsg define topic struct to client -  sau khi gen topic cần custom tag cho model 
+message TopicMsg {
+  string id = 1;      //`redis:"id"`                 // ID của topic
+  string cover = 2;   //`redis:"cover"`                  // Cover của topic
+  string title = 3;   //`redis:"title"`               // title của topic
+  string desc = 4;    //`redis:"desc"`                   // mô tả topic: Xích bích 1,...
+  int32 kind = 5;     //`redis:"kind"`                    // topic type, sau này sẽ nâng cấp lên thành dạng màn hình đọc truyện,....
+  repeated ArticleMsg linfos = 6;     //`redis:"-"`    // trả về danh sách các bài báo trong event.
+  int32 number_feature = 7;          //`redis:""` số bài show trên slice trên trang chủ
+  string icon = 8; //`redis:"icon"` icon cua event
+
+}
+
+
+//ListTopicsMsg define danh sách nhóm các topic
+message GroupTopicsMsg {
+  int32 class_id = 1;               // ID của nhóm chủ đề 
+  string class_name = 2;            // tên nhóm chủ đề
+  string  class_color = 3;          // mã màu của nhóm chủ đề 
+  int32 class_type = 4;             // kiểu nhóm chủ đề : mới nhất, tâm sự,...
+  repeated TopicMsg topics = 5;     // danh sách các chủ đề cho user.
+}
+
+//UserListTopicsMsg define màn hình topic của user.
+message UserListTopicsMsg {
+  int32 code = 1;                  // response code
+  string desc = 2;           // description
+  GroupTopicsMsg followed = 3;     // Các topic mà user đã follow
+  repeated GroupTopicsMsg suggest  = 4;     // Các topic mà gợi ý cho user.
+}
+
+//ListTopicsMsg suggest các topic từ ngoài trang tổng hợp
+message ListTopicsMsg {
+  repeated TopicMsg topics = 1;     // danh sách các chủ đề cho user.
+}
+
+//FollowMsg dùng để khi user click vào follow và unfollow.
+message FollowMsg {       
+  string register_id = 1;          // firebase register token
+  ETopicType type = 2;             // follow or unfollow
+  string topic_id = 3;             // topic id 
+}
+

@@ -40,8 +40,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/settingnotification" />
 
@@ -50,8 +50,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:layout_marginTop="8dp"
-                android:gravity="clip_horizontal"
+                android:gravity="center_horizontal"
                 android:text="Tin hệ thống"
+                android:textAlignment="center"
+                android:textColor="#444444"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -64,8 +66,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/settingmark" />
 
@@ -76,6 +78,7 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center_horizontal"
                 android:text="Tin đánh dấu"
+                android:textColor="#444444"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -88,8 +91,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/settingreaded" />
 
@@ -100,6 +103,7 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center_horizontal"
                 android:text="Tin đã đọc"
+                android:textColor="#444444"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -112,8 +116,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/settingcommunicate" />
 
@@ -124,6 +128,7 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center_horizontal"
                 android:text="Tin bình luận"
+                android:textColor="#444444"
                 android:textSize="16sp" />
         </LinearLayout>
 

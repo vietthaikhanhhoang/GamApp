@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+
+package model;
+
+
+import "p_listing_response.proto";
+
+//TrackingMsg dùng để tracking impression và click
+message TrackingMsg {
+    enum ETrackingType {
+      //ETrackingType type tracking
+      TRACKING_NOTHING       = 0;
+      TRACKING_IMPRESSION    = 1;
+      TRACKING_CLICK         = 2;
+      TRACKING_READ         = 3;
+    }
+
+    ETrackingType tracking_type = 1;
+    EAppType app_type = 2;
+    EContentType doc_type = 3;
+    string app_locat = 4;
+    uint32 pos = 5;
+    string id = 6;
+    int64 ts_start = 7; // timestamp của msg khi bắt đầu click, hoặc impression
+    int64 ts_end = 8; // timestamp của msg khi end - dùng trong trường hợp đọc bài báo chi tiết
+}
+
+/* 
+. action nào thì sẽ có ETrackingType đó (impression, click -> sử dụng trong các API trả về list)
+. click vào doc_type nào thì apply doc_type đó vào tracking
+. app_locat nhận các giá trị phụ thuộc vào app_type
+ . nếu app_type: APP_NEWS -> app_locat = 999:cid
+ . nếu app_type: APP_VIDEOS -> app_locat = categories ID (888, 11, 12,...)
+ . nếu app_type: APP_FOOTBALL(11) --> app_locat =  parent_cate_id:children_cate_id, nếu vào bóngđá24H --> app_locat = 0:0
+ . nếu app_type: APP_RELATIVE, APP_TOPREAD, APP_SEARCH, APP_EVENT --> app_locat : Rỗng
+ . pos: vị trí của tin đã có impression hoặc có click vào
+ 
+. trường hợp ETrackingType =  TRACKING_READ, thì:
+    . bắt đầu open bài báo, cho ts_start = unix timestamp dạng milisecond (13 so)
+    . khi kết thúc bài báo (tính đến đoạn hiển thị link báo gốc, share,), cho ts_end = unix timestamp dạng milisecond (13 so)
+    . bài báo được click từ chỗ nào -> đẩy app_type vào tương ứng, và pos, id tương ứng. (app_locat = "", và doc_type == CONTENT_TYPE_ARTICLES) 
+
+. id
+  . nếu là articles, video thì là lid
+  . nếu là event, thì đẩy eventID
+  . nếu là topic, thì đẩy topicID
+  . nếu là các document khác, sẽ có trường id trong document trả về. 
+  . với type là google ads thì ko cần đẩy.
+*/
+message ListTrackingMsg {
+  repeated TrackingMsg bulk_tracking = 1;
+}

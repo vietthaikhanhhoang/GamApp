@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package model;
+
+
+import "p_article.proto";
+import "p_video.proto";
+import "p_event.proto";
+import "p_sponsor.proto";
+import "p_googleads.proto";
+import "p_utility.proto";
+import "p_saving.proto";
+import "p_vote.proto";
+import "p_trending.proto";
+import "p_live.proto";
+import "p_topic.proto";
+import "p_user_profile.proto";
+import "p_collection.proto";
+import "p_notice.proto";
+import "p_matchinfo.proto";
+import "p_fanclub.proto";
+import "p_ugc.proto";
+
+
+// lid := ctx.DefaultQuery("lid", "0")
+// 	sid := ctx.DefaultQuery("sid", "999")
+// 	count := ctx.DefaultQuery("count", "23")
+// 	cid := ctx.DefaultQuery("cid", "999")
+// 	listSuperStr := ctx.DefaultQuery("listSuper", "")
+
+//define eapptype
+enum EAppType {
+    //EAppType app type has listing
+    APP_NOTHING   = 0;
+    APP_NEWS      = 1;
+    APP_VIDEOS    = 2;
+    APP_EVENT     = 3;
+    APP_RELATIVE  = 4;
+    APP_TOPREAD   = 5;
+    APP_SEARCH    = 6;
+    APP_NOTICE   = 7;         // notice trên trang tổng hợp hoặc bất kỳ trang nào đó
+    APP_VIDEO_BLACK    = 8;
+    APP_TOPIC          = 9;   // topic detail 
+    APP_LIST_TOPICS    = 10;  // list các nhóm chủ đề 
+    APP_FOOTBALL = 11; // màn hình chuyên trang football
+    APP_FANPAGE = 12;  // màn hình fanpage
+    
+  }
+
+  //define eapptype
+enum EArticleViewType {
+    //EArticleViewType với kiểu trả về là article, thì có các view như trên
+    VIEW_DEFAULT   = 0;
+    VIEW_FEATURE   = 1;
+    VIEW_THREE     = 2;   
+  }
+
+enum EContentType {
+    //content type in article
+    CONTENT_TYPE_NOTHING    = 0; // document ko được định nghĩa - ko show lên trên view.
+	  CONTENT_TYPE_ARTICLES   = 1; // document là dạng bài báo như hiện tại
+	  CONTENT_TYPE_VIDEOS     = 2; // document là dạng video - có listVideos, listImages,...
+	  CONTENT_TYPE_EVENTS      = 3; // document là dạng event - có eventID để  lấy tất cả các bài trong event, và linfos để show ra cac bai
+	  CONTENT_TYPE_SPONSORS   = 4; // document là dạng tin tài trợ - có các field như tin tài trợ hiện tại.
+	  CONTENT_TYPE_GOOGLE_ADS = 5; // document là dạng tin qc từ google ads - có ad unit trả về.
+    CONTENT_TYPE_UTILITIES  = 6; // document là dạng tin tiện ích - khi click vào tin có thể nhảy ra màn hình tiện ích .
+    CONTENT_TYPE_READ_ARTICLE  = 7; // document là bài đọc gần đây
+    CONTENT_TYPE_BOOKMARK_ARTICLE  = 8; // document là bài đã đánh dấu
+    CONTENT_TYPE_VOTE  = 9; // document là cover, title, link -> nhảy sang appstore
+    CONTENT_TYPE_TRENDING  = 10; // document là khoảnh khắc, sự kiện
+    CONTENT_TYPE_LIVE  = 11; // document là dạng live, chắc là content cũng như trending
+    CONTENT_TYPE_LIST_TOPICS  = 12; // document là dạng list topic - Gợi ý chủ đề cho user - có thể thuộc nhiều nhóm khác nhau
+    CONTENT_TYPE_TOPIC  = 13; // document là dạng topic - Giao diện như event, thêm follow.
+    CONTENT_TYPE_POLL  = 14; // document là dạng poll - cho phép user vote các lựa chọn khác nhau
+    CONTENT_TYPE_COLLECTION  = 15; // document là dạng collection - tổng hợp các tiện ích, nhảy vào webview.
+    CONTENT_TYPE_NOTICE  = 16; // document là dạng notice - jump vào event hoặc topic
+    CONTENT_TYPE_MATCHINFO  = 17; // document là dạng list match info - list thông tin về trận đấu
+    //phase 14
+    CONTENT_TYPE_LIST_CLUBS  = 18; // document là dạng list các club - thông tin về các club để user FOLLOW
+    //phase 15
+    CONTENT_TYPE_UGC  = 19; // document là dạng ugc content
+  }
+
+enum EResponseCode {
+    //content type in article
+    CODE_NOTHING    = 0;
+    CODE_FAIL       = 1;
+    CODE_SUCCESSFUL    = 200;
+  
+  }
+
+message ListingRequest {
+    string lid = 1;
+    int32 sid = 2;
+    int32 cid = 3;
+    int32 count = 4;
+    repeated int32 listSuper = 5;
+}
+
+message Document {
+  EContentType type = 1;
+  EArticleViewType art_view = 2;
+  oneof doc {
+            ArticleMsg art = 3;
+            VideoMsg video = 4;
+            EventMsg event = 5;
+            SponsorMsg sponsor = 6;
+            GoogleAdsMsg g_ads = 7;
+            UtilityMsg utility = 8;
+            VotingAppMsg vote = 9;
+            OlderArticleMsg s_art = 10;
+            OlderArticleMsg b_art = 11;
+            TrendingMsg trending = 12;
+            LiveMsg live = 13;
+            ListTopicsMsg list_topics = 14;
+            TopicMsg topic = 15;
+            PollMsg poll = 16;
+            CollectionMsg collection = 17;
+            NoticeMsg  notice = 18;
+            ListingMatchInfoMsg match_info = 19;
+            //phase 14
+            ListClubMsg list_clubs = 20;
+            //phase 15
+            UGCMsg ugc = 21;
+  }
+}
+
+message ListingResponses {       
+    EResponseCode code = 1;
+    string desc = 2;
+    repeated Document linfos  = 3;
+    string title = 4;   //sử dụng khi dùng dynamic link hoặc push vào event + topic
+}
+
+message RecommendResponses {
+  EResponseCode code = 1;
+  string desc = 2;
+  repeated Document top  = 3;
+  repeated Document recs  = 4;
+  repeated Document bottom  = 5;
+  int32 number_rec_article = 6;
+}
+
+message RelativeResponses {
+  EResponseCode code = 1;
+  string desc = 2;
+  repeated Document linfos  = 3;
+  repeated Document topread  = 4;
+  Document more = 5;
+
+}
+
+message ArticleDetailResponses {
+  EResponseCode code = 1;
+  string desc = 2;
+  ArticleMsg linfo = 3;
+}
+
+//PersonalMsg màn hình thông tin cá nhân của user - call lên server.
+message PersonalMsg {
+  EResponseCode code = 1;                 // response code
+  string desc = 2;                       // response description
+  UserProfileMsg user = 3;                      // user profile
+  repeated ReferralMsg referral = 4;    // list referral
+  repeated PreferMsg prefer_cats = 5;   // list prefer categories - đẩy lên api cid=999, sid=999, listSuper=1,2,3 prefer_cats=1,2,3
+}
+
+
+message SearchEvent {
+  string id = 1;
+  string name = 2;
+  repeated ArticleMsg articles  = 3;
+}
+//Search suggest 
+message SearchSuggestResponses {       
+  EResponseCode code = 1;
+  string desc = 2;
+  string keyword = 3;   //suggest keyword
+  repeated  SearchEvent events  = 4;  // các bài báo trong event 
+  Document more  = 5;   // sử dụng để add thêm document vào giữa phần ô search.
+}
+
+
+//phase 14
+message ResponseGeneral {
+  EResponseCode code = 1; // response code
+  string desc = 2;   
+  Document doc = 3; // default sẽ là NULL
+}
+
+
+//phase 15
+//UGCAuthorWallResponses sử dụng trong màn hình wall của KOL
+message ResponsesUGCAuthorWall {       
+  EResponseCode code = 1;
+  string desc = 2;
+  repeated Document linfos  = 3;  // thông tin các bài viết của author
+  UGCAuthor author = 4; //thông tin của author 
+  string title = 5;   //maybe dùng cho push
+}

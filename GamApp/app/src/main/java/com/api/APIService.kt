@@ -11,8 +11,8 @@ interface APIService {
 //    @GET("group/{id}/users") dang bi sai
 //    fun groupList(@Path("id") groupId: Int, @QueryMap options: Map<String?, String?>?): Call<List<com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion.User?>?>?
 
-    @GET("/news/v2.0/articles?sid=999&count=24&json=1")
-    fun getListNews(@Query("cid") cid: String, @Query("lid") lid: String, @Query("realsize") realsize: Int, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
+    @GET("/news/v2.0/articles?count=24&json=1")
+    fun getListNews(@Query("sid") sid: Int?, @Query("cid") cid: String, @Query("lid") lid: String, @Query("realsize") realsize: Int, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("/news/commentv1/exe/cmt")
@@ -25,7 +25,7 @@ interface APIService {
     fun downloadFileWithDynamicUrlSync(): Call<ResponseBody>
 
     @GET("/news/v2.0/website")
-    suspend fun getCategory(@HeaderMap headers: Map<String, String>) : Response<ResponseBody>
+    fun getCategory(@HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
     @GET("/news/v2.0/relativev2?&json=1")
     fun getRelativeNews(@Query("lid") lid: String, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
@@ -42,4 +42,13 @@ interface APIService {
 
     @GET("/news/v2.0/video/getvideocategoriesV2")
     fun getCategoryVideo(@HeaderMap headers: Map<String, String>) : Call<ResponseBody>
+
+    @GET("/news/v2.0/football_event?count=24&json=1")
+    fun getBallNews(@Query("lid") lid: String?, @Query("realsize") realsize: Int?, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
+
+    @GET("game/list_betting?offset=0&limit=24&json=1")
+    fun getListGuessMatch(@HeaderMap headers: Map<String, String>) : Call<ResponseBody>
+
+    @GET("game/get_statistic?json=1")
+    fun getGuessStatistic(@Query("match_id") match_id: Int?, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 }

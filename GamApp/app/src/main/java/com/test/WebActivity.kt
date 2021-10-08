@@ -14,7 +14,7 @@ class WebActivity : AppCompatActivity() {
     lateinit var txtTitle: TextView
 
     fun loadWebview() {
-        txtTitle = findViewById(R.id.txtTitle)
+        txtTitle = findViewById(R.id.txtStar)
         webNews = findViewById(R.id.webNews)
 
         val typeface = Typeface.createFromAsset(

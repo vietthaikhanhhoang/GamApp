@@ -217,7 +217,7 @@ class DetailNewsActivity : AppCompatActivity() {
             }
         }
 
-        txtTitle = findViewById(R.id.txtTitle)
+        txtTitle = findViewById(R.id.txtStar)
         if(art.has("sid")) {
             val sid = art.getInt("sid")
             txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)

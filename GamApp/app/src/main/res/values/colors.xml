@@ -21,4 +21,16 @@
 
     <color name="contentdetailnews">#252525</color>
 
+    <color name="predictColor">#73C338</color>
+    <color name="predictFalseColor">#FF550A</color>
+    <color name="voteUnselectedColor">#999999</color>
+
+    <color name="bgpredictColor">#F5F5F5</color>
+    <color name="bgvoteUnselectedColor">#D8D8D8</color>
+
+    <color name="backgroundGrayLightColor">#EDEDED</color>
+    <color name="grayColor">#999999</color>
+
+    <color name="saveGuess">#EC622D</color>
+
 </resources>

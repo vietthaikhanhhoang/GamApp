@@ -66,7 +66,7 @@ class ListVideoAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView
     }
 
     inner class ImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
         var imgWebsite: ImageView = itemView!!.findViewById(R.id.imgWebsite)
         var imgPlay: ImageView = itemView!!.findViewById(R.id.imgPlay)
         var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)

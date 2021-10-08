@@ -20,7 +20,7 @@ class settingtextAdapter(var mList: JSONArray) : RecyclerView.Adapter<RecyclerVi
 
     class settingtextholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imgIcon: ImageView = itemView!!.findViewById(R.id.imgIcon)
-        var txtTitle: TextView = itemView!!.findViewById(R.id.txtTitle)
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
         var layoutParent: ConstraintLayout = itemView!!.findViewById(R.id.layoutParent)
     }
 
