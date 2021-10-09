@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+import "p_googleads.proto";
+import "p_article.proto";
+
+
+
+//VideoMsg define video được show lên trang chủ
+message VideoMsg {
+  string lid = 1;
+  string cover = 2;
+  string title = 3;
+  string desc = 4;
+  repeated string listimage = 5;
+  repeated string listVideos = 6;
+  string content = 7;
+  int32 supercid = 8;
+  int32 sid = 9;
+  int32 cid = 10;
+  VideoQualityType quality = 11;
+  string fplayurl = 12;
+  int32 sizeCmt = 13;
+  string url = 14; //phục vụ ios ở mode review
+  int32 weight = 15; // tỷ lệ random
+  GoogleAdsMsg google_ads_in_detail = 16; // support google on detail
+  GoogleAdsMsg google_ads_below_detail = 17; // support google duoi bai detail
+  GoogleAdsMsg google_ads_video_preroll = 18; // ads unit cho các bài video
+  map<string, VideoMetadata> videoMeta = 19;      // metadata của video
+  GoogleAdsMsg google_ads_center2 = 20; // vị trí ads ở giữa tin liên quan và tin đọc nhiều, 
+  string topics = 21; // bài báo thuộc topic nào - đây là topic thuộc cate con supercid
+  VideoType video_type = 22;             // type của video : normal, youtube, facebook,....
+  string vtitle = 23;                   //title của video
+  int32 like = 24; // số like của bài
+  int32 dislike = 25; // số dislike của bài
+  //id 35 bị vấn đề, ko nên dùng ID 35
+  int32 fc_view = 26; //dạng bài trong fanclub hay dạng bài bình thường ? 1: fc , 0 : bình thường 
+
+}

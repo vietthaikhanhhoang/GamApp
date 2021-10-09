@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+
+import "p_game.proto";
+
+//FootballCateMsg define id, icon, title của các cate trong bóng đá
+message ListClubMsg {
+  int32 id = 1;         // id của list club 
+  string title = 2;     // tên list - dùng để sử dụng luôn trong phần document
+  repeated GClub clubs = 3 ;  // list các câu lạc bộ
+  //phase 14
+  int32 club_number = 4; // tổng số club hiện có
+}
+
+message ResponseListClub {
+    repeated ListClubMsg list_clubs = 1;      // repeat list club
+    repeated ClubFollowOption options = 2;    // list các option user cần follow
+    //phase 15
+    GClub favourite = 3; // club mà bạn đặc biệt yêu thích, my team 
+    
+}
+
+//sử dụng cho like và dislike của bài báo
+enum EREACTIONType {
+  EREACTION_NOTHING = 0;       // nothing 
+  EREACTION_LIKE = 1;          // loại LIKE 
+  EREACTION_DISLIKE = 2;       // loại DISLIKE
+  
+}
+
+//sử dụng cho like và dislike của bài báo
+enum EREACTIONGROWTHType {
+    EGROWTH_NOTHING = 0;     // nothing 
+    EGROWTH_INCR = 1;        // tăng reaction
+    EGROWTH_DECR = 2;       // giảm reaction
+    
+  }
+
+enum FanClubType {
+    FANCLUB_NOTHING = 0;    // nothing 
+    FANCLUB_FOLLOW = 1;       // Follow đội bóng
+    FANCLUB_UNFOLLOW = 2;   // bỏ follow đội bóng
+    
+  }
+
+message RequestPostReaction {
+    string lid = 1; // lid của bài báo
+    EREACTIONType reaction = 2; //reaction của user
+    EREACTIONGROWTHType growth = 3; // kiểu tăng hay giảm
+    
+}
+
+message ClubFollowOption {
+  int32 id = 1; //id của option
+  string title = 2; // title của option 
+  string logo =3 ; // logo của option: thẻ đỏ,...
+}
+
+message RequestPostFollow {
+  FanClubType type = 1; // kiểu follow hoặc unfollow
+  int32 club_id = 2; // id của câu lạc bộ cần follow hoặc unfollow 
+  repeated ClubFollowOption options = 3; // list các option user cần follow
+  //phase 15
+  int32 default = 4; // club default được định nghĩa là club mà user Yêu Thích, còn lại là Quan Tâm 
+}

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+import "p_game.proto";
+
+
+//MatchInfoMsg định nghĩa document dạng MatchInfo
+message MatchInfoMsg {
+    int32 id = 1;   // ID của trận đấu
+    GClub home_club = 2; //home_club thông tin về chủ nhà
+    GClub away_club = 3; //away_club thông tin đội khách
+    string start_date = 4; // ngày diễn ra trận đấu
+    string start_time = 5; // thời gian diễn ra trận đấu
+    EGMatchType status = 6 ; // trạng thái trận đấu - chưa diễn ra, đang diễn ra, đã kết thúc
+    string info = 7;  //info show thông tin trận đấu: Pen 3:2, ....
+    int32 home_scored = 8; // số bàn thắng của chủ nhà
+    int32 away_scored = 9; // số bàn thắng của đội khách
+    int32 last_scored = 10 ;//đội nào ghi bàn sau cùng: 1 chủ nhà, 2 là khách ,0 là nothing --> show background đen
+    int32 circle = 11; // vòng đấu thứ bao nhiêu
+    repeated StatisticOpt predic_opts = 12; //thông tin dự đoán - DÙNG HOME_CLUB để làm gốc cho : Thắng, Hoà, Thua
+    int32 betting_id = 13 ; // id trận đấu do team vận hành set 
+                            // nếu != 0 --> show: xem chi tiết và click nhảy vào màn hình betting
+    string popup_url = 14; //show popup khi click vào xem livescore
+    GTournament tournament = 15; // thông tin về giải đấu
+    int32 total_betted = 16; //tổng số user đã dự đoán
+    //phase 14
+    int32 match_length_min = 17; // số phút của trận đấu
+    int64 begin = 18; // unix timestamp bắt đầu trận đấu
+    int32 period = 19; // trạng thái của 1 trận đấu - dùng trên server
+    int32 hope_star = 20; // trận đấu có ngôi sao hy vọng hay ko ? 0 - là ko có, 1 là có
+  }
+
+message ListingMatchInfoMsg {
+    repeated MatchInfoMsg matchinfo = 1; // lặp lại thông tin của trận đấu 
+    int32 total = 2; // số trận đấu tối đa cho phép
+    
+}

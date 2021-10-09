@@ -17,8 +17,11 @@ import com.barservicegam.app.R
 import com.customadapter.DetailNewsAdapter
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import com.google.protobuf.ByteString
 import com.lib.Utils
 import data.dataHtml
+import model.PArticle
+import model.PListingResponse
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -44,7 +47,7 @@ class DetailNewsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var param3: String? = null
+    private var param3: ByteArray? = null
     private var param4: String? = null
 
     lateinit var txtTitle: TextView
@@ -57,7 +60,7 @@ class DetailNewsFragment : Fragment() {
 
     lateinit var relativeFragment:RelativeFragment
 
-    lateinit var art: JSONObject
+    lateinit var art: PArticle.ArticleMsg
     val arrNewsRelative = JSONArray()
 
     var category:String = ""
@@ -68,31 +71,19 @@ class DetailNewsFragment : Fragment() {
         var content = ""
 
         if(art != null) {
-            if(art.has("title")) {
-                title = art.getString("title")
-            }
-
-            if(art.has("desc")) {
-                desc = art.getString("desc")
-            }
-
-            if(art.has("content")) {
-                content = art.getString("content")
-            }
+            title = art.title
+            desc = art.desc
+            content = art.content
         }
 
         arrayContent.add(dataHtml(title, "title"));
         var category = category
 
-        if(art.has("sid")) {
-            val sid = art.getInt("sid")
-            category = category + " • " + Global.getNameWebsite(sid, requireContext())
-        }
+        val sid = art.sid
+        category = category + " • " + Global.getNameWebsite(sid, requireContext())
 
-        if(art.has("posttime")) {
-            val posttime:Long = art["posttime"] as Long
-            category = category + " • " + Global.currentTimeSecUTC(posttime)
-        }
+        val posttime:Long = art.posttime
+        category = category + " • " + Global.currentTimeSecUTC(posttime)
 
         arrayContent.add(dataHtml(category, "category"))
 
@@ -101,14 +92,7 @@ class DetailNewsFragment : Fragment() {
         var isNative:Boolean = false
         txtNative.text = "WebView"
 
-        if(art.has("native")) {
-            if(art.getInt("native") == 1) {
-                isNative = true
-                txtNative.text = "Native"
-            }
-        }
-
-        if(isNative) {
+        if(art.native == PArticle.ENumEnableType.IS_ENABLE) {
             val doc = Jsoup.parse(content)
             for (i in 0 until doc.body().children().size) {
                 var element = doc.body().children()[i]
@@ -139,15 +123,6 @@ class DetailNewsFragment : Fragment() {
                         if(arrayContent.last().type == "img" || arrayContent.last().type == "video") {
                             flag = true
                         }
-//                        if(doc.body().children().size > 1) {
-//                            var elementPrevious = doc.body().children()[i-1]
-//                            if (elementPrevious.tagName() == "img") {
-//                                var src = elementPrevious.attr("src")
-//                                if (src != null) {
-//                                    flag = true
-//                                }
-//                            }
-//                        }
                         arrayContent.add(dataHtml(content, type, flag))
                     }
                 } else if (element.tagName() == "strong" || element.tagName() == "b") {
@@ -196,10 +171,8 @@ class DetailNewsFragment : Fragment() {
                             arrayContent.add(dataHtml(arrContent[0].toString(), type))
                         } else {
                             if(art != null) {
-                                if (art.has("cover")) {
-                                    val cover = art.getString("cover")
-                                    arrayContent.add(dataHtml(cover, "video"))
-                                }
+                                val cover = art.cover
+                                arrayContent.add(dataHtml(cover, "video"))
                             }
                         }
                     }
@@ -210,19 +183,6 @@ class DetailNewsFragment : Fragment() {
             arrayContent.add(dataHtml(content, "webview"))
         }
 
-//        var jInfo = "[{\"title\" : \"WHO nhận định không cần thiết tiêm mũi vắc-xin tăng cường\" ," +
-//                "" + "cover\" : \"https://cdntm.24hstatic.com/2021/8/19/9/4aa4d207ecf49294a0fb0e26e6fd52a6.jpg\" ," +
-//                "" + "posttime\" : \"1629338280000\"}]"
-//        var json = "{\"Art\" : \"$jInfo\"}"
-//
-//        var arrRelative = JSONArray(json)
-
-//        val stringJson = "[{\"Art\": [{\"title\": \"WHO nhận định không cần thiết tiêm mũi vắc-xin tăng cường\",\"cover\": \"https://cdntm.24hstatic.com/2021/8/19/9/4aa4d207ecf49294a0fb0e26e6fd52a6.jpg\",\"time\": 1560262643000}, {\"title\": \"WHO nhận định không cần thiết tiêm mũi vắc-xin tăng cường\",\"cover\": \"https://cdntm.24hstatic.com/2021/8/19/9/4aa4d207ecf49294a0fb0e26e6fd52a6.jpg\",\"time\": 1560262643000}]}  ]"
-//        val arrRelative = JSONArray(stringJson)
-//
-//
-//        arrayContent.add(dataHtml(arrRelative.toString(), "relative"))
-
         detailNewsAdapter = DetailNewsAdapter(this.requireContext(), arrayContent, rclView)
         rclView.adapter = detailNewsAdapter
     }
@@ -231,9 +191,7 @@ class DetailNewsFragment : Fragment() {
         var lid = ""
 
         if(art != null) {
-            if(art.has("lid")) {
-                lid = art.getString("lid")
-            }
+            lid = art.lid
         }
 
         Log.d("vietnb", "lay tin lien quan: " + lid)
@@ -294,7 +252,7 @@ class DetailNewsFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
-            param3 = it.getString(ARG_PARAM3)
+            param3 = it.getByteArray(ARG_PARAM3)
             param4 = it.getString(ARG_PARAM4)
         }
     }
@@ -307,14 +265,12 @@ class DetailNewsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_detail_news, container, false)
 
         param3.let {
-            art = JSONObject(it)
+            art = PArticle.ArticleMsg.parseFrom(it)
         }
 
-        if(art.has("sid") && art.has("cid")) {
-            val sid = art.getInt("sid")
-            val cid = art.getInt("cid")
-            category = Global.getNameCategory(sid, cid)
-        }
+        val sid = art.sid
+        val cid = art.cid
+        category = Global.getNameCategory(sid, cid)
 
         param4.let {
             if (it != "") {
@@ -329,10 +285,7 @@ class DetailNewsFragment : Fragment() {
         txtNative = view.findViewById(R.id.txtNative)
 
         txtTitle = view.findViewById(R.id.txtStar)
-        if(art.has("sid")) {
-            val sid = art.getInt("sid")
-            txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)
-        }
+        txtTitle.text = Global.getNameWebsite(sid, txtTitle.context)
 
         imgBack = view.findViewById(R.id.imgBack)
         imgBack.setOnClickListener{

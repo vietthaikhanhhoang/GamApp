@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+
+//WhatNewsMsg define các thông báo mới trên icon tiện ích ( khám phá) hoặc event
+message whatNewsMsg {
+    enum whatNewsMsgType {
+        //WhatNewsMsgType show trên tiện ích hay trên event
+        NOTHING           = 0;   // ko show ở đâu cả
+        EVENT_ICON        = 1;   // show ở icon event (bóng đá, covid,....)
+        KHAMPHA_ICON      = 2;   // show ở icon khám phá
+        FOOTBALL_GUESS    = 3;   // show icon ở footer -> football -> dự đoán bóng đá
+      }
+    int32 id = 1;
+    string title = 2;
+    whatNewsMsgType type = 3;
+    int32 max_number_show = 4; // maximum số lần showed
+    int32 is_enabled = 5; // 0: disable hoặc 1: enable whatnews
+  }
+
+//whatNewsResponse sẽ trả lại cho client khi call lên server lúc open_app lần đầu trong ngày
+message whatNewsResponse {
+    int32 code = 1;
+    string desc = 2;
+    whatNewsMsg data = 3;
+}

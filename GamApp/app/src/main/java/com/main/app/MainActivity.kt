@@ -47,8 +47,6 @@ import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-import model.*
-
 typealias CallBackAfterVerifyPhone = (String)-> Unit
 
 class MainActivity : AppCompatActivity() {

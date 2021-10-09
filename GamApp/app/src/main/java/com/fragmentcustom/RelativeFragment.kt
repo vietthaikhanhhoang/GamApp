@@ -44,7 +44,7 @@ class RelativeFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var rclView: RecyclerView
-    var listNewsAdapter = ListNewsAdapter(JSONArray(), false, true)
+    var listNewsAdapter = ListNewsAdapter(mutableListOf(), false, true)
 
     val arrNews = JSONArray()
 
@@ -88,7 +88,7 @@ class RelativeFragment : Fragment() {
         }
 
 //        Log.d("vietnb" , "lay duoc du lieu: " + arrNews.length())
-        listNewsAdapter.mList = arrNews
+//        listNewsAdapter.mList = arrNews
         listNewsAdapter.notifyDataSetChanged()
     }
 

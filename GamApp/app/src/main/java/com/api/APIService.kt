@@ -1,5 +1,6 @@
 package com.api
 
+import model.PListingResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -11,7 +12,7 @@ interface APIService {
 //    @GET("group/{id}/users") dang bi sai
 //    fun groupList(@Path("id") groupId: Int, @QueryMap options: Map<String?, String?>?): Call<List<com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion.User?>?>?
 
-    @GET("/news/v2.0/articles?count=24&json=1")
+    @GET("/news/v2.0/articles?count=24")
     fun getListNews(@Query("sid") sid: Int?, @Query("cid") cid: String, @Query("lid") lid: String, @Query("realsize") realsize: Int, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
     @FormUrlEncoded
@@ -43,7 +44,7 @@ interface APIService {
     @GET("/news/v2.0/video/getvideocategoriesV2")
     fun getCategoryVideo(@HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
-    @GET("/news/v2.0/football_event?count=24&json=1")
+    @GET("/news/v2.0/football_event?count=24")
     fun getBallNews(@Query("lid") lid: String?, @Query("realsize") realsize: Int?, @HeaderMap headers: Map<String, String>) : Call<ResponseBody>
 
     @GET("game/list_betting?offset=0&limit=24&json=1")

@@ -14,11 +14,12 @@ import com.barservicegam.app.R
 import com.bumptech.glide.Glide
 import com.khaolok.myloadmoreitem.Constant
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import model.PListingResponse
 import org.json.JSONArray
 import org.json.JSONObject
 
 
-public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = true, var isRelative:Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.DocumentOrBuilder>, var enableLoadMore:Boolean = true, var isRelative:Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class NewsHolder1(v: View) : RecyclerView.ViewHolder(v){
         var imgIconMask: ImageView = itemView!!.findViewById(R.id.imgIconMask)
@@ -106,15 +107,13 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
     }
 
     override fun getItemCount(): Int {
-        return mList.length()
+        return mList.count()
     }
 
-//    fun getItem(position: Int): String? {
-//        return mList.get(position)
-//    }
-
     override fun getItemViewType(position: Int): Int {
-        if (mList[position] == "loading") {
+        val document = mList.get(position)
+
+        if (document.art.title == "loading") {
             return Constant.VIEW_TYPE_LOADING
         }
 
@@ -122,16 +121,11 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
             return Constant.VIEW_TYPE_ITEM
         }
 
-        val jObject = mList[position]
-        if(jObject is JSONObject) {
-            if(jObject.has("art_view")) {
-                val art_view = jObject.getInt("art_view")
-                Log.d("vietnb", "art_view: $art_view")
-                if(art_view == 1) {
-                    return Constant.VIEW_TYPE_ITEM_LARGE
-                } else if(art_view == 2) {
-                    return Constant.VIEW_TYPE_ITEM_THREE
-                }
+        if(document is PListingResponse.Document) {
+            if(document.artView == PListingResponse.EArticleViewType.VIEW_FEATURE) {
+                return Constant.VIEW_TYPE_ITEM_LARGE
+            } else if(document.artView == PListingResponse.EArticleViewType.VIEW_THREE) {
+                return Constant.VIEW_TYPE_ITEM_THREE
             }
         }
 
@@ -146,78 +140,61 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
         if (holder is NewsHolder1)
         {
             holder.imgComment.visibility = View.INVISIBLE
-            val jObject = JSONObject(mList[position].toString())
-            val doc = jObject.getJSONObject("Doc")
-            val art = doc.getJSONObject("Art")
+            val document = mList.get(position)
+            val art = document.art
+            holder.txtTitle.text = art.title
 
-            if(art.has("title")) {
-                holder.txtTitle.text = art["title"].toString()
-            }
+            val cover = art.cover
 
-            if(art.has("cover")) {
-                val cover = art["cover"].toString()
+            val radius = 20; // corner radius, higher value = more rounded
+            val margin = 0; // crop margin, set to 0 for corners with no crop
+            Glide.with(holder.imgCover.context)
+                .load(cover)
+                .transform(RoundedCornersTransformation(radius, margin))
+                .placeholder(R.drawable.thumbnews)
+                .into(holder.imgCover)
 
+            val listimage = art.listimageList
+            if(listimage.count()> 2) {
+                val cover1 = listimage[1].toString()
                 val radius = 20; // corner radius, higher value = more rounded
                 val margin = 0; // crop margin, set to 0 for corners with no crop
-                Glide.with(holder.imgCover.context)
-                    .load(cover)
-                    .transform(RoundedCornersTransformation(radius, margin))
-                    .placeholder(R.drawable.thumbnews)
-                    .into(holder.imgCover)
 
-            }
+                if(holder.imgCover2 != null) {
+                    Glide.with(holder.imgCover2!!.context)
+                        .load(cover1)
+                        .transform(RoundedCornersTransformation(radius, margin))
+                        .placeholder(R.drawable.thumbnews)
+                        .into(holder.imgCover2!!)
+                }
 
-            if(art.has("listimage")) {
-                val listimage = art.getJSONArray("listimage")
-                if(listimage.length()> 2) {
-                    val cover1 = listimage[1].toString()
-                    val radius = 20; // corner radius, higher value = more rounded
-                    val margin = 0; // crop margin, set to 0 for corners with no crop
-
-                    if(holder.imgCover2 != null) {
-                        Glide.with(holder.imgCover2!!.context)
-                            .load(cover1)
-                            .transform(RoundedCornersTransformation(radius, margin))
-                            .placeholder(R.drawable.thumbnews)
-                            .into(holder.imgCover2!!)
-                    }
-
-                    if(holder.imgCover3 != null) {
-                        val cover2 = listimage[2].toString()
-                        Glide.with(holder.imgCover3!!.context)
-                            .load(cover2)
-                            .transform(RoundedCornersTransformation(radius, margin))
-                            .placeholder(R.drawable.thumbnews)
-                            .into(holder.imgCover3!!)
-                    }
+                if(holder.imgCover3 != null) {
+                    val cover2 = listimage[2].toString()
+                    Glide.with(holder.imgCover3!!.context)
+                        .load(cover2)
+                        .transform(RoundedCornersTransformation(radius, margin))
+                        .placeholder(R.drawable.thumbnews)
+                        .into(holder.imgCover3!!)
                 }
             }
 
             var nameWebsite = ""
-            if(art.has("sid")) {
-                val sid = art.getInt("sid")
-                nameWebsite = Global.getNameWebsite(sid, holder.txtDesc.context)
-            }
+            val sid = art.sid
+            nameWebsite = Global.getNameWebsite(sid, holder.txtDesc.context)
 
-            if(art.has("posttime")) {
-                val posttime:Long = art["posttime"] as Long
-                nameWebsite = nameWebsite + " • " + Global.currentTimeSecUTC(posttime)
-            }
+            val posttime:Long = art.posttime
+            nameWebsite = nameWebsite + " • " + Global.currentTimeSecUTC(posttime)
 
             holder.imgIconMask.visibility = View.INVISIBLE
-            if(art.has("listVideos")) {
-                val listVideos = art.getJSONArray("listVideos")
-                if(listVideos.length() > 0) {
-                    holder.imgIconMask.visibility = View.VISIBLE
-                }
+            val listVideos = art.listVideosList
+            if(listVideos.count() > 0) {
+                holder.imgIconMask.visibility = View.VISIBLE
             }
 
-            if(art.has("sizeCmt")) {
-                val sizeCmt = art.getInt("sizeCmt")
-                if(sizeCmt > 0) {
-                    nameWebsite = nameWebsite + " • " + sizeCmt
-                    holder.imgComment.visibility = View.VISIBLE
-                }
+            val sizeCmt = art.sizeCmt
+            if(sizeCmt > 0) {
+                nameWebsite = nameWebsite + " • " + sizeCmt
+                holder.imgComment.visibility = View.VISIBLE
             }
 
             holder.txtDesc.text = nameWebsite
@@ -233,22 +210,25 @@ public class ListNewsAdapter(var mList: JSONArray, var enableLoadMore:Boolean = 
 
     fun removeLoadingView() {
         //Remove loading item
-        var last = mList.length() - 1
-        mList.remove(last)
+        var last = mList.count() - 1
+        mList.removeAt(last)
         notifyItemRemoved(last)
     }
 
-    fun addData(array: JSONArray) {
-        var start = this.mList.length()
-        for (i in 0 until array.length()) {
-            this.mList.put(array[i])
+    fun addData(array: MutableList<PListingResponse.Document>) {
+        var start = this.mList.count()
+        for (i in 0 until array.count()) {
+            mList.add(array.get(i))
+
         }
-        notifyItemRangeInserted(start, this.mList.length())
+        notifyItemRangeInserted(start, this.mList.count())
     }
 
     fun addLoadingView() {
         //add loading item
-        mList.put("loading")
-        notifyItemInserted(mList.length() - 1)
+        var artLoading = model.PArticle.ArticleMsg.newBuilder().setTitle("loading")
+        val document = PListingResponse.Document.newBuilder().setArt(artLoading)
+        mList.add(document)
+        notifyItemInserted(mList.count() - 1)
     }
 }

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package model;
+//option java_package = "fplay.news.proto";
+
+import "p_article.proto";
+
+//EventMsg define event struct to client
+message EventMsg {
+  string eventid = 1; // ID của event
+  string cover = 2;   // Cover của event
+  string title = 3;   // mô tả event: dịch virus corona,...
+  int32 number_feature = 4;  // số bài show trên slice trên trang chủ
+  repeated ArticleMsg linfos = 5;    // trả về danh sách các bài báo trong event.
+  int32 weight = 6; // tỷ lệ random
+  string icon = 7; // icon cua event
+}

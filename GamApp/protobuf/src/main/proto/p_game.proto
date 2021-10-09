@@ -1,0 +1,297 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+
+//Thông tin trận đấu
+
+//EMatchType trạng thái một trận đấu
+enum EGMatchType {
+    MATCH_TYPE_PRE_HAPPEN    = 0; // chưa diễn ra
+    MATCH_TYPE_HAPPENNING    = 1; // đang diễn ra
+    MATCH_TYPE_FINISHED      = 2; // đã kết thúc
+}
+
+//EGMatchPollType lựa chọn poll của user
+enum EGMatchPollType {
+    MATCH_POLL_TYPE_NOTHING      = 0; // không lựa chọn gì cả
+    MATCH_POLL_TYPE_WIN          = 1; // chọn Thắng
+    MATCH_POLL_TYPE_BALANCE      = 2; // chọn Hòa 
+    MATCH_POLL_TYPE_LOST         = 3; // chọn Thua
+}
+
+//EGMatchUserResultType lựa chọn của user
+enum EGMatchUserResultType {
+    USER_CHOOSE_MATCH_NOTHING = 0; //ko biết
+    USER_CHOOSE_MATCH_WIN     = 1; // user thắng
+    USER_CHOOSE_MATCH_LOST    = 2; // user thua
+}
+
+//GTeam thông tin đội bóng
+message GClub {
+    int32 id = 1;       // id đội bóng - team_id
+    string logo = 2 ;   // URL logo đội bóng
+    string name = 3;    // tên đội bóng
+    string meta_topic  = 4;   // chỉ sử dụng cho SERVER
+    string meta_keyword  = 5; // chỉ sử dụng cho SERVER
+    string url_info = 6; // url info của fanclub
+    string shortname = 7; // tên ngắn gọn của club
+    //phase 14
+    int32 number_member = 8; //số lượng thành viên đã FOLLOW
+}
+//phase 14
+message GHopeStarInfo {
+    int32 id = 1; // id của ngôi sao Hy Vọng - Maybe set cho từng trận đấu
+    int32 win = 2; // đúng được tặng bao nhiêu điểm ?
+    int32 lost = 3 ; // thua bị trừ bao nhiêu điểm
+    string info = 4; // đoạn text thể hiện thông tin khi sử dụng Ngôi Sao Hy Vọng
+}
+
+
+//GTournament thông tin về giải đấu
+message GTournament {
+    int32 id = 1; // id của giải đấu
+    string fullname = 2; // tên chi tiết giải đấu
+    string shortname = 3; // tên rút gọn của giải đấu
+    string icon = 4; // icon của giải đấu
+}
+
+//GMatch thông tin trận đấu
+message GMatch {
+    int32 id = 1;  // id trận đấu
+    GClub home_club = 2 ; // thông tin đội chủ nhà
+    GClub away_club = 3 ; // thông tin đội khách
+    string match_info = 4 ; // giờ thi đấu khi trận đấu sắp diễn ra, hoặc tỷ số nếu trận đấu đã kết thúc, client show
+    string match_title = 5; // title nếu cần thiết 
+    string match_cover = 6; // link cover của match
+    EGMatchType  status = 7 ;     // trạng thái - sắp diễn ra, đang diễn ra, đã kết thúc
+    int32  start_time = 8 ; // thời gian diễn ra trận đấu
+    int32  end_time = 9 ; // thời gian kết thúc trận đấu
+    int32 home_club_goal = 10; // số bàn thắng chủ nhà ghi được ghi được
+    int32 away_club_goal = 11; // số bàn thắng  Khách ghi được
+    string players_statistic = 12; // URL đội hình
+    string match_statistic = 13 ; //  URL thống kê trận đấu
+    string relative = 14 ; // thông tin lq - chưa chốt được nó là gì ? 
+    string match_date = 15 ; //thời gian trận đấu diễn ra, dạng string để hiển thị
+    string match_group_icon = 16; // link icon của giải đấu
+    string match_venue = 17; // đá trên sân nào ?
+    string match_venue_icon = 18; // icon của sân
+    int32 match_featured = 19; //  trận đấu này có phải feature ko ? trường này dùng cho admin 
+    int32 match_noti_enabled = 20; //  trận đấu này có enable cái chuông ko ? 1 là enable, 0 là disable .
+    string match_bxh = 21; //  URL bảng xếp hạng của giải đấu
+    string match_live = 22; //  LID của trận đấu, dùng để call article_live
+    //phase 14: thêm ngôi sao hy vọng
+    GHopeStarInfo hope_star = 23;  // hope_star : ngôi sao hy vọng được enable hay disable
+    string match_highlight = 24; // dùng trên server
+
+}
+
+//GFootBallMatchs group các trận đấu theo ngày diễn ra
+message GFootBallMatchs {
+    string match_time = 1 ;      // thời gian diễn ra trận đấu
+    repeated GMatch match = 2;  // thông tin trận đấu
+    int32 status = 3;           //disable hay enable
+
+}
+
+//Toàn bộ màn hình thông tin trận đấu
+message GListFootBallMatchs {
+    int32 code = 1;  // mã code 
+    string desc = 2; // thông tin 
+    int32 id = 3;  //  id của list
+    int32 number_spin = 4 ; // số lượt quay còn lại của user
+    int32 total_score = 5 ; // tổng số điểm còn lại của user.
+    repeated GFootBallMatchs football_match = 6 ; //group các trận đấu theo ngày
+    int32 status = 7; // trạng thái list .
+    int32 total_lock = 8; // tổng số điểm user đang bị lock
+}
+
+//PollBet dùng cho client post dự đoán lên server
+message PollBet {
+    EGMatchPollType opt_id = 1; // dự đoán nào ?
+    int32 match_id = 2; // dự đoán trận nào ? betting từ hệ thống của mình
+    //phase 14
+    int32 hope_star = 3; // có ngôi sao hy vọng hay ko ? 1 là có, 0 là ko ?
+}
+
+message StatisticOpt {
+    EGMatchPollType opt_id = 1; // dự đoán nào ?
+    int32 match_id = 2; // dự đoán trận nào ?
+    int32 total_opt = 3 ; //  tổng số user lựa chọn phương án opt_id 
+}
+
+message StatisticBet {
+    int32 code = 1; //mã code
+    string desc = 2; // thông tin code 
+    repeated StatisticOpt opt_statistic = 3; //  thống kê option 
+    int32 total_count = 4; // tổng số lượng user tham gia dự đoán .
+    EGMatchPollType opt_id = 5; //option lựa chọn của user
+    //phase 14
+    int32 hope_star = 6; // user có đặt ngôi sao hy vọng hay không ? 1 là có, 0 là ko 
+    int32 total_score = 7; // tổng số điểm hiện tại của user. 
+    int32 total_lock = 8; // tổng số điểm user bị lock
+
+}
+
+//màn hình lịch sử dự đoán
+
+//GUserBetted thông tin một trận đấu user dự đoán đúng hay sai ?
+message GUserBetted {
+    EGMatchUserResultType status = 1; //user dự đoán đúng hay sai ?
+    GMatch match = 2;               //thông tin trận đấu
+}
+
+//GHistory trả về màn hình lịch sử dự đoán
+message GHistory {
+    int32 code = 1; // code API trả về
+    string desc = 2; // mô tả lỗi
+    int32 bet_match = 3;  // số trận tham gia dự đoán
+    int32 bet_true = 4; // dự đoán đúng
+    int32 bet_false = 5; // dự đoán sai
+    int32 total_score = 6; // tổng số điểm hiện tại của user. 
+    repeated GUserBetted GUserBetted = 7;     // thông tin dự đoán của trận đấu
+    //phase 14
+    int32 total_lock = 8; // tổng số điểm user bị lock
+}
+
+//lịch sử quay thưởng - phần này design cần xử lý lại , đang ko thống nhất giá trị ra điểm.
+
+//1 lượt quay thưởng
+message GSpin {
+    int32 id = 1;
+    int32 bet_time = 2; //thời gian user quay thưởng ?
+    int32 gift_id = 3; // user quay vào giải thưởng nào ?
+    string gift_name = 4; // tên giải thưởng
+    int32 type = 5; // kiểu giải thưởng - auto cộng vào hệ thống hay cần phải trao giải - phần này chỉ backend cần
+    int32 status = 6 ; // trạng thái đã nhận giải hay chưa ? đang processing hay thế nào ?
+}
+
+//màn hình quay thưởng dưới client
+message GSpinHistory {
+    int32 code = 1; //API trả về
+    string desc = 2; // mô tả mã code 
+    repeated GSpin spin = 3; // danh sách các lần quay thưởng
+}
+
+//message request nhận quà tặng từ user
+message requestGift {
+    int32 id = 1; //spin ID
+    int32 gift_id = 2 ; // gift ID
+}
+
+
+//[web] call API khi user click vào quay thưởng, trả lại thông tin cho user
+message SpinScore {
+    int32 code = 1 ; // response code trả về
+    string desc = 2; // mô tả giá trị trả về
+    string device_id = 3;   // deviceID của user quay thưởng
+    int32 number_spin = 4 ; // số lượt quay còn lại của user
+    int32 total_score = 5 ; // tổng số điểm còn lại của user.
+    //phase 14
+    int32 total_lock = 6;   // tổng số điểm user bị lock
+}
+
+//[web] POST thông tin lên API: đổi điểm lấy số lần quay, server response thành công hay thất bại ( có thể response lại SpinSocore để  web update luôn thông tin)
+message SpinExchange {
+    string device_id = 1; // deviceID của user quay thưởng
+    int32 score_exchange = 2; // số điểm cần đổi thành lượt quay
+}
+
+//[web] POST lên API khi user quay được giải thưởng, response lại cho user SpinScore
+message PostGift {
+    string device_id = 1; // deviceID của user quay thưởng
+    int32 gift_id = 2; // user quay vào giải thưởng nào ?
+}
+
+enum ECommentMsgType {
+    //ECommentMsgType type
+    COMMENT_NOTHING    = 0;  // không hiển thị gì
+    COMMENT_USER       = 1;  // hiển thị comment của user với avatar,....
+    COMMENT_SYSTEM     = 2;  // hiển thị comment của system
+}
+
+//CommentMsg send to client
+message CommentMsg {
+    string id = 1 ; // comment ID
+    string avatar = 2; // URL avatar 
+    string level_t = 3; // display level text cạnh avatar
+    string level_c = 4; // display màu background của level text
+    string name_t = 5; // display tên của user
+    string name_c = 6; // display màu chữ tên của user
+    string content_t = 7; // display nội dung comment
+    string content_c = 8; // display màu chữ của nội dung comment
+    ECommentMsgType type = 9 ; // kiểu comment - user hay system
+}
+
+//AdminCommentMsg sử dụng trên server
+message AdminCommentMsg {
+    string commentID = 1;       // commentID
+    string fb_id = 2;           // fb ID
+    string device_id = 3;       // deviceID
+    string app_id = 4;          // app ID
+    string content = 5;         // nội dung
+    int32 match_id = 6;         // trận đấu
+    ECommentMsgType type = 7 ; // kiểu comment - user hay system
+
+}
+
+//CommentPostRequest khi client đẩy comment lên server
+message CommentPostRequest {
+    string id = 1; // là fbID hoặc appleID
+    int32 match_id = 2; // id trận đấu - khi user click từ màn hình listing, thì match_id = 0
+    string content = 3; // content user post lên
+    string device_id = 4; // ios : ưu tiên IDFA -> nếu ko có dùng UUID, android ưu tiên google_ads_id, ko có thì dùng uuid
+                          // có thể đẩy hoặc ko, nếu ko có server sẽ tự add vào qua header
+}
+
+//CommentPostResponse response trả lại khi đẩy comment
+message CommentPostResponse {
+    int32 code = 1; // code API trả về
+    string desc = 2; // mô tả lỗi
+    string id = 3; // return comment ID 
+}
+
+
+//CommentSuggestResponse get danh sách các từ suggest cho user post
+message CommentSuggestResponse {
+    int32 code = 1; // code API trả về
+    string desc = 2; // mô tả lỗi
+    repeated string suggest = 3; // list các comment suggest cho user
+    repeated string bad_keywords = 4; //danh sách các từ nhạy cảm, trong nội dung comment gặp các từ này replace thành *** trước khi đẩy lên server
+}
+
+//ListCommentResponse list comment trả về cho client
+message ListCommentResponse {
+    int32 code = 1; // code API trả về
+    string desc = 2; // mô tả lỗi
+    repeated CommentMsg comments = 3; // list các comments
+
+}
+
+message RegisMatchPush {
+    int32 match_id = 1 ; // id của trận đấu
+    string firebase_token = 2; // token của firebase
+    int32 reg_type = 3; // 1: reg, 2 : bỏ reg
+}
+
+//phase 14
+//GUserInfo thông tin của 1 user khi chơi betting - cần update lại redis in struct khi gen lại p_game.proto
+message GUserInfo {
+    string device_id = 1; // deviceID của user
+    int32 spin = 2; // số lượt quay của user
+    int32 score = 3; // tổng điểm của user
+    int32 score_locked = 4; // tổng điểm bị lock của user
+    int32 bet_win = 5; //số trận thắng của user
+    int32 bet_lost = 6; //số trận thua của user
+    int32 status = 7; //trạng thái của user - có thể bị disable
+}
+//phase 14
+// phần này 
+//khi user vào match detail để betting sẽ show để cộng điểm
+//khi user betting nhanh ở ngoài cũng SHOW popup để cộng điểm
+//RespCheckFirstBetting response lại cho client biết là user lần đầu ?
+message RespCheckFirstBetting {
+    int32 first_betting = 1 ; // trạng thái lần đầu betting - 0: là lần đầu, 1 là ko phải 
+    int32 add_poin = 2;       //số điểm được cộng khi lần đầu tham gia betting
+}

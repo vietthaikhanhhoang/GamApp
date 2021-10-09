@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+package model;
+//option java_package = "fplay.news.proto";
+
+
+//EMatchType trạng thái một trận đấu
+enum EGoogleAdsType {
+    GOOGLE_ADS_TYPE_BANNER    = 0; // default bằng 0 - là dạng banner cũ
+    GOOGLE_ADS_TYPE_INPAGE    = 1; // sử dụng trong trường hợp inpage - chia đôi thẻ <p> để nhét quảng cáo vào.
+    GOOGLE_ADS_TYPE_NOTHING   = 2; // không call cái quảng cáo nào cả
+}
+
+
+message GoogleAdsTargeting {
+  string key = 1; // tên key 
+  repeated string value = 2; // array của key 
+}
+
+//GoogleAdsMsg define dạng tin quảng cáo từ ad network
+message GoogleAdsMsg {
+  string id = 1;  // ad unit
+  repeated GoogleAdsTargeting targeting = 2; //targeting
+  repeated string exclude_labels = 3; // exclude 
+  int32 number_tags_show_ads_on_article = 4; // số tag show
+  EGoogleAdsType  type = 5 ;     // kiểu ads showed
+}

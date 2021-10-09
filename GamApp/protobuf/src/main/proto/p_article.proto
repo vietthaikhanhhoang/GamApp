@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package model;
+//option java_package = "fplay.news.proto";
+import "p_googleads.proto";
+
+
+enum ENumEnableType {
+  NOTHING = 0;
+  IS_ENABLE = 1;
+  NOT_ENABLE = 2;
+}
+
+enum VideoType {
+  NORMAL = 0;
+  YOUTUBE = 1;
+  FACEBOOK = 2;
+}
+
+//metadata của video
+message VideoSituations {
+  int32 position = 1; // tình huống ở phút bao nhiêu ? tình theo giây
+  string text = 2;    // tên tình huống 
+  string icon = 3;    //icon của tình huống 
+}
+
+enum VideoQualityType {
+  //EArticleViewType với kiểu trả về là article, thì có các view như trên
+  DEFAULT   = 0;
+  LOW = 1;
+  MEDIUM = 2;
+  HIGHT = 3;  
+}
+
+//metadata của video
+message VideoMetadata {
+  int32 duration = 1;            // độ dài của video nếu có
+  repeated VideoSituations situation = 2;  // tình huống hoặc caption trên từng file video
+  string caption = 3; // caption của video
+  VideoQualityType quality = 4;   // chất lượng của file video
+  int32 video_width = 6;          // chiều rộng của video
+  int32 video_high = 7;           // chiều dài của video
+}
+
+
+//ArticleMsg define article detail
+message ArticleMsg {
+  string lid = 1;
+  int64 posttime = 2;
+  string url = 3;
+  string cover = 4;
+  string fplayurl = 5;
+  string title = 6;
+  string desc = 7;
+  string content = 8;
+  repeated string listimage = 9;
+  int32 count_view = 10;
+  ENumEnableType native = 11;
+  string keywords = 12;
+  int32 sid = 13;
+  int32 cid = 14;
+  int32 supercid = 15;
+  ENumEnableType isWebPin = 16;
+  ENumEnableType isWebPinVideo = 17;
+  string author = 18;
+  ENumEnableType hasVideo = 19;
+  int32 sizeCmt = 20;
+  repeated string listVideos = 21;
+  repeated string listMp4 = 22;
+  ENumEnableType is_live = 23;
+  GoogleAdsMsg google_ads_in_detail = 24; // support google on detail
+  GoogleAdsMsg google_ads_below_detail = 25; // support google duoi bai detail
+  ENumEnableType keywords_enable = 26;  // cho phép enable hoặc disable hashtag
+  ENumEnableType status = 27;  // có cho phép show ở client ko ? hay chỉ show ở admin ?
+  GoogleAdsMsg google_ads_center2 = 28; // vị trí ads ở giữa tin liên quan và tin đọc nhiều, 
+  //default sẽ là off, ko lấy default từ config
+  GoogleAdsMsg google_ads_video_preroll = 29; // ads unit cho các bài video
+  map<string, VideoMetadata> videoMeta = 30;      // metadata của video
+  string topics = 31; // bài báo thuộc topic nào - đây là topic thuộc cate con supercid
+  VideoType video_type = 32;             // type của video : normal, youtube, facebook,....
+  string vtitle = 33;                   //title của video
+  int32 like = 34; // số like của bài
+  int32 dislike = 35; // số dislike của bài
+  int32 fc_view = 36; //dạng bài trong fanclub hay dạng bài bình thường ? 1: fc , 0 : bình thường 
+}

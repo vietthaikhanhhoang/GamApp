@@ -2,18 +2,21 @@ package com.fragmentcustom.football
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.barservicegam.app.R
 import com.lib.Utils
 import com.main.app.MainActivity
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,18 +45,6 @@ class GameLuckyFragment : Fragment() {
         }
     }
 
-//    class JSBridge(val context: Context) {
-//        private var con:Context
-//        init {
-//            this.con = context
-//        }
-//
-//        @JavascriptInterface
-//        fun showMessageInNative(message: String) {
-//            Log.d("vietnb", "message: " + message)
-//        }
-//    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,11 +64,23 @@ class GameLuckyFragment : Fragment() {
             }
         }
 
-        var url = "https://lucky.tinmoi24.vn/quay-thuong.html?utm_source=xxxx&utm_campain=game&utm_medium=zzz&platform=ios"
+        //android: "https://lucky.tinmoi24.vn/quay-thuong.html?utm_source=xxxx&utm_campain=game&utm_medium=zzz"
+
+        var url = "https://lucky.tinmoi24.vn/quay-thuong.html?utm_source=xxxx&utm_campain=game&utm_medium=zzz&platform=android"
         url += "&device_id=0ef50568-d402-472f-994e-bea239532a90"
 
-        val webViewClient = object : WebViewClient() {
+        //webGame.loadUrl("http://192.168.55.104:2000/")
+        webGame.loadUrl(url)
 
+        webGame.addJavascriptInterface(
+            WebAppInterface(requireContext()),
+            "JsInterface"
+        ) // To call methods in Android from using js in the html, AndroidInterface.showToast, AndroidInterface.getAndroidVersion etc
+
+        val webSettings: WebSettings = webGame.getSettings()
+        webSettings.javaScriptEnabled = true
+
+        val webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 Log.d("vietnb", "bat dau chay")
@@ -90,6 +93,8 @@ class GameLuckyFragment : Fragment() {
                 Log.d("vietnb", "da chay xong")
                 view!!.setBackgroundColor(resources.getColor(R.color.black, null))
                 progressWeview.visibility = View.INVISIBLE
+
+                //view.loadUrl("javascript:alert(showVersion('called by Android'))")
             }
 
             override fun shouldOverrideUrlLoading(
@@ -101,12 +106,19 @@ class GameLuckyFragment : Fragment() {
             }
         }
         webGame.webViewClient = webViewClient
-
-        val webSettings = webGame.settings
-        webSettings.builtInZoomControls = true
-        webSettings.javaScriptEnabled = true
-
+//
         val webChromeClient = object : WebChromeClient() {
+            override fun onJsAlert(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult
+            ): Boolean {
+                Log.d("LogTag", message!!)
+                result.confirm()
+                return true
+            }
+
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
 
@@ -117,8 +129,6 @@ class GameLuckyFragment : Fragment() {
         }
         webGame.webChromeClient = webChromeClient
 
-        val interf = WebAppInterface(this.requireContext(), "jsHandler")
-//        webGame.addJavascriptInterface(JSBridge(this.requireContext()),"jsHandler")
         webGame.loadUrl(url)
         return view
     }
@@ -144,15 +154,43 @@ class GameLuckyFragment : Fragment() {
     }
 }
 
-public class WebAppInterface(requireContext: Context, s: String) {
-    private lateinit var context: Context
-    fun WebAppInterface(context: Context) {
-        this.context = context
+////
+class WebAppInterface internal constructor(c: Context) {
+    var mContext: Context
+
+    // Show a toast from the web page
+    @JavascriptInterface
+    fun showToast(toast: String?) {
+        //Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+        Log.d("vietnb", "xem len khong: $toast")
     }
 
     @JavascriptInterface
-    fun showMessageInNative(message: String) {
-        Log.d("vietnb", "message: " + message)
+    fun showText(toast: String?) {
+        //Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+        Log.d("vietnb", "xem len khong AAA: $toast")
+    }
+
+    @JavascriptInterface
+    fun postMessage(toast: String?) {
+        //Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+        Log.d("vietnb", "xem len khong AAA 111: $toast")
+    }
+
+    @JavascriptInterface
+    fun getAndroidVersion(): Int {
+        Log.d("vietnb", "xem len khong 111")
+        return Build.VERSION.SDK_INT
+    }
+
+    @JavascriptInterface
+    fun showAndroidVersion(versionName: String?) {
+        Toast.makeText(mContext, versionName, Toast.LENGTH_SHORT).show()
+    }
+
+    // Instantiate the interface and set the context
+    init {
+        mContext = c
     }
 }
 
