@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,26 +19,24 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.fragmentcustom.*
 import com.fragmentcustom.football.BallPagerFragment
-import com.fragmentcustom.football.dddbtk.MatchDetailFragment
 import com.fragula.Navigator
-import com.fragula.extensions.addFragment
-import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.lib.*
 import com.lib.eventbus.EventBusFire
-import com.testfragment.Test3Fragment
-import com.testfragment.Test4Fragment
 import data.DataPreference
 import data.PREFERENCE
 import org.greenrobot.eventbus.EventBus
@@ -146,7 +143,10 @@ class MainActivity : AppCompatActivity() {
     fun getVideoThumbnail(videoPath: String?, width: Int, height: Int): Bitmap? {
         var bitmap: Bitmap? = null
         // 获取视频的缩略图
-        bitmap = ThumbnailUtils.createVideoThumbnail(videoPath!!, MediaStore.Video.Thumbnails.MICRO_KIND)
+        bitmap = ThumbnailUtils.createVideoThumbnail(
+            videoPath!!,
+            MediaStore.Video.Thumbnails.MICRO_KIND
+        )
         if (bitmap != null) {
             bitmap = ThumbnailUtils.extractThumbnail(
                 bitmap, width, height,
@@ -156,10 +156,110 @@ class MainActivity : AppCompatActivity() {
         return bitmap
     }
 
+    fun getDeepLinkFirebase() {
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                // Get deep link from result (may be null if no link is found)
+                var deepLink: Uri? = null
+                if (pendingDynamicLinkData != null) {
+                    deepLink = pendingDynamicLinkData.link
+                }
+
+                // Handle the deep link. For example, open the linked
+                // content, or apply promotional credit to the user's
+                // account.
+                // ...
+
+                // [START_EXCLUDE]
+                // Display deep link in the UI
+                if (deepLink != null) {
+                    Snackbar.make(
+                        findViewById(android.R.id.content),
+                        "Found deep link!", Snackbar.LENGTH_LONG
+                    ).show()
+
+                    //linkReceiveTextView.text = deepLink.toString()
+                    Log.d("vietnb", "hehehe")
+                } else {
+                    Log.d("vietnb", "getDynamicLink: no link found")
+                }
+                // [END_EXCLUDE]
+            }
+            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
+    }
+
+    fun getTokenPushFirebase(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("vietnb", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d("vietnb", "lay duoc token roi: $token")
+            //Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+        })
+
+        if(intent.extras != null) {
+            val extras = intent.extras
+            for (key in extras!!.keySet()) {
+                val value: Any? = extras.get(key)
+                Log.d(
+                    "vietnb",
+                    "Extras received at onNewIntent:  Key: $key Value: $value"
+                )
+            }
+            val title: String? = extras.getString("title")
+            val message: String? = extras.getString("body")
+            if (message != null && message.isNotEmpty()) {
+                intent.removeExtra("body")
+                Log.d("vietnb", "cha hieu kieu j")
+            }
+
+
+//            val inform = intent.extras
+//            if(inform != null)
+//
+//
+//            for (i in 0 until inform.keySet().size) {
+//                val key = inform.keySet().elementAt(i)
+//
+//                var title = "rong title"
+//                var message = "rong message"
+//
+//                if(key == "title") {
+//                    title = inform.getString("title").toString()
+//                }
+//
+//                if(key == "message") {
+//                    message = inform.getString("message").toString()
+//                }
+//
+//                Log.d("vietnb", "HHHH title: $title va $message")
+//            }
+
+
+            Log.d("vietnb", "kiem tra xem co thong tin tu firebase push khong")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val uri = intent.data
+        if(uri != null) {
+            Log.d("vietnb", "vao app voi link $uri")
+        }
+
         FirebaseApp.initializeApp(this)
+
+        getDeepLinkFirebase()
+
+        getTokenPushFirebase()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -281,30 +381,35 @@ class MainActivity : AppCompatActivity() {
 
     fun selectItemIdBottom(index: Int) {
         if(index == 0) {
+            bottomView.selectedItemId = R.id.navigation_news
             navigatorTabNews.visibility = View.VISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
             navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
         } else if(index == 1) {
+            bottomView.selectedItemId = R.id.navigation_video
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.VISIBLE
             navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
         } else if(index == 2) {
+            bottomView.selectedItemId = R.id.navigation_ball
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
             navigatorTabBall.visibility = View.VISIBLE
             navigatorTabExplore.visibility = View.INVISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
         } else if(index == 3) {
+            bottomView.selectedItemId = R.id.navigation_explore
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
             navigatorTabBall.visibility = View.INVISIBLE
             navigatorTabExplore.visibility = View.VISIBLE
             navigatorTabSetting.visibility = View.INVISIBLE
         } else if(index == 4) {
+            bottomView.selectedItemId = R.id.navigation_setting
             navigatorTabNews.visibility = View.INVISIBLE
             navigatorTabVideos.visibility = View.INVISIBLE
             navigatorTabBall.visibility = View.INVISIBLE

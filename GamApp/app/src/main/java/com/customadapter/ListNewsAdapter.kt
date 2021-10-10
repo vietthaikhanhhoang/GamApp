@@ -12,14 +12,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.api.Global
 import com.barservicegam.app.R
 import com.bumptech.glide.Glide
+import com.customview.BVPlayerVideo
 import com.khaolok.myloadmoreitem.Constant
+import com.lib.Utils
+import com.main.app.MainActivity
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import model.PListingResponse
+import model.PVideo
 import org.json.JSONArray
 import org.json.JSONObject
 
 
 public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.DocumentOrBuilder>, var enableLoadMore:Boolean = true, var isRelative:Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var positionVideoPlay: Int = -1
+    lateinit var bvPlayerVideo: BVPlayerVideo
 
     inner class NewsHolder1(v: View) : RecyclerView.ViewHolder(v){
         var imgIconMask: ImageView = itemView!!.findViewById(R.id.imgIconMask)
@@ -53,6 +59,157 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
         }
     }
 
+    inner class ListTopic(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class VideoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)
+        var imgWebsite: ImageView = itemView!!.findViewById(R.id.imgWebsite)
+        var imgPlay: ImageView = itemView!!.findViewById(R.id.imgPlay)
+        var imgCover: ImageView = itemView!!.findViewById(R.id.imgCover)
+        var layoutVideo: ConstraintLayout = itemView!!.findViewById(R.id.layoutVideo)
+        var txtDesc: TextView = itemView!!.findViewById(R.id.txtCategory)
+
+        var imgShare: ImageView = itemView!!.findViewById(R.id.imgShare)
+        var txtComment: TextView = itemView!!.findViewById(R.id.txtComment)
+        var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)
+
+        init {
+            val typefaceTitle = Typeface.createFromAsset(txtTitle.getContext().assets, "fonts/sfuidisplaysemibold.ttf")
+            txtTitle.setTypeface(typefaceTitle)
+            txtTitle.setTextColor(txtTitle.getResources().getColor(R.color.titlenewscolor, null))
+
+            val typefaceDesc = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaymedium.ttf")
+            txtDesc.setTypeface(typefaceDesc)
+            txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.descnewscolor, null))
+        }
+
+        fun pauseVideo() {
+            if(bvPlayerVideo != null) {
+                bvPlayerVideo.pauseVideo()
+            }
+        }
+
+        fun showVideoPosition(position: Int) {
+            if (bvPlayerVideo.parent != null) {
+                (bvPlayerVideo.parent as ViewGroup).removeView(bvPlayerVideo)
+            }
+
+            Log.d("vietnb", "position luc nay: $position")
+            if(position == -1) {
+                pauseVideo()
+                return
+            }
+
+            positionVideoPlay = position
+
+//            var urlVideo = ""
+//            val mVideo = this.mList.getJSONObject(position)
+//            if(mVideo.has("listVideos")) {
+//                val listVideos = mVideo.getJSONArray("listVideos")
+//                if(listVideos.length() > 0) {
+//                    urlVideo = listVideos[0].toString()
+//                }
+//            }
+//
+//            bvPlayerVideo.loadVideo(urlVideo)
+//            notifyItemChanged(position)
+        }
+
+        fun bindData(video: PVideo.VideoMsg, position: Int) {
+
+            if(this.layoutVideo.findViewWithTag<BVPlayerVideo>(100) != null) {
+                val btnExtra = this.layoutVideo.findViewWithTag<BVPlayerVideo>(100)
+                if (btnExtra.parent != null) {
+                    (btnExtra.parent as ViewGroup).removeView(btnExtra)
+                }
+            }
+
+            if(positionVideoPlay == position) {
+                bvPlayerVideo.tag = 100
+                bvPlayerVideo.layoutParams = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT
+                )
+                this.layoutVideo.addView(bvPlayerVideo)
+            }
+
+            this.txtTitle.text = video.title
+
+            val cover = video.cover
+
+            val radius = 0; // corner radius, higher value = more rounded
+            val margin = 0; // crop margin, set to 0 for corners with no crop
+            Glide.with(this.imgCover.context)
+                .load(cover)
+                //.transform(RoundedCornersTransformation(radius, margin))
+                .placeholder(R.drawable.thumbnews)
+                .into(this.imgCover)
+
+            Glide.with(this.imgWebsite.context)
+                .load(cover)
+                //.transform(RoundedCornersTransformation(12, margin))
+                .placeholder(R.drawable.thumbnews)
+                .into(this.imgWebsite)
+
+            var nameWebsite = ""
+            val sid = video.sid
+            nameWebsite = Global.getNameWebsite(sid, this.txtDesc.context)
+            this.txtDesc.text = nameWebsite
+
+            this.imgCover.setOnClickListener{
+                if(positionVideoPlay != position) {
+                    //showVideoPosition(position)
+                }
+            }
+
+            this.imgShare.setOnClickListener {
+                val topActivity = Utils.getActivity(this.imgShare.context)
+                if(topActivity is MainActivity) {
+                    val fplayurl = video.fplayurl
+                    topActivity.shareVideo(fplayurl)
+                }
+            }
+
+            imgComment.visibility = View.INVISIBLE
+            txtComment.visibility = View.INVISIBLE
+            val sizeCmt = video.sizeCmt
+            if(sizeCmt > 0) {
+                txtComment.text = sizeCmt.toString()
+                imgComment.visibility = View.VISIBLE
+                txtComment.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    inner class EventHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class NoticeHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class SponserHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class CollectionHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class AdsHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class UgcHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
+
+    inner class UtilityHolder(v: View) : RecyclerView.ViewHolder(v){
+
+    }
 
     interface ListNewsAdapterListener {
         fun click_ListNewsAdapterListener(position: Int)
@@ -97,6 +254,96 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
             )
         }
 
+        if (viewType == Constant.VIEW_TYPE_LIST_TOPIC) {
+            return ListTopic(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.listtopicholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_VIDEO) {
+            return VideoHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.listimageholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_SPONSER) {
+            return SponserHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.sponserholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_LIST_EVENT) {
+            return EventHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.eventholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_LIST_COLLECTION) {
+            return CollectionHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.collectionholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_NOTICE) {
+            return NoticeHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.noticeholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_ADS) {
+            return AdsHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.adsholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_UTILITY) {
+            return UtilityHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.utilityholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
+        if (viewType == Constant.VIEW_TYPE_UGC) {
+            return UgcHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.ugcholder,
+                    parent,
+                    false
+                )
+            )
+        }
+
         return LoadingHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.progress_loading,
@@ -111,26 +358,48 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
     }
 
     override fun getItemViewType(position: Int): Int {
+        if(isRelative) {
+            return Constant.VIEW_TYPE_ITEM
+        }
+
+        if(position == 0) {
+            return Constant.VIEW_TYPE_ITEM_LARGE
+        }
+
         val document = mList.get(position)
 
         if (document.art.title == "loading") {
             return Constant.VIEW_TYPE_LOADING
         }
 
-        if(isRelative) {
-            return Constant.VIEW_TYPE_ITEM
-        }
-
-        if(document is PListingResponse.Document) {
+        val contentType = document.type
+        if(contentType == PListingResponse.EContentType.CONTENT_TYPE_ARTICLES) {
             if(document.artView == PListingResponse.EArticleViewType.VIEW_FEATURE) {
-                return Constant.VIEW_TYPE_ITEM_LARGE
+                return Constant.VIEW_TYPE_ITEM_LARGE //to
             } else if(document.artView == PListingResponse.EArticleViewType.VIEW_THREE) {
-                return Constant.VIEW_TYPE_ITEM_THREE
+                return Constant.VIEW_TYPE_ITEM_THREE //3 anh
             }
-        }
-
-        if(position == 0) {
-            return Constant.VIEW_TYPE_ITEM_LARGE
+            return Constant.VIEW_TYPE_ITEM //thuong
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_VIDEOS) {
+            return Constant.VIEW_TYPE_VIDEO
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_LIST_TOPICS) {
+            return Constant.VIEW_TYPE_LIST_TOPIC
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_VIDEOS) {
+            return Constant.VIEW_TYPE_VIDEO
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_NOTICE) {
+            return Constant.VIEW_TYPE_NOTICE
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_GOOGLE_ADS) {
+            return Constant.VIEW_TYPE_ADS
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_SPONSORS) {
+            return Constant.VIEW_TYPE_SPONSER
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_COLLECTION) {
+            return Constant.VIEW_TYPE_LIST_COLLECTION
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_EVENTS) {
+            return Constant.VIEW_TYPE_LIST_EVENT
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_UTILITIES) {
+            return Constant.VIEW_TYPE_UTILITY
+        } else if(contentType == PListingResponse.EContentType.CONTENT_TYPE_UGC) {
+            return Constant.VIEW_TYPE_UGC
         }
 
         return Constant.VIEW_TYPE_ITEM
@@ -205,6 +474,10 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
                     this.listener!!.click_ListNewsAdapterListener(position)
                 }
             }
+        } else if(holder is VideoHolder) {
+            val document = mList.get(position)
+            val video = document.video
+            holder.bindData(video, position)
         }
     }
 
