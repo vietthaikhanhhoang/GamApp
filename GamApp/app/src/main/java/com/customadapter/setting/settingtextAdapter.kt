@@ -1,5 +1,6 @@
 package com.customadapter.setting
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +11,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.main.app.MainActivity
 import com.barservicegam.app.R
+import com.customadapter.ListNewsAdapter
 import com.dialog.LogoutDialog
+import com.fragmentcustom.autoplayvideo.AutoplayVideoFragment
 import com.lib.Utils
 import org.json.JSONArray
 import org.json.JSONObject
 
 
 class settingtextAdapter(var mList: JSONArray) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     class settingtextholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imgIcon: ImageView = itemView!!.findViewById(R.id.imgIcon)
         var txtTitle: TextView = itemView!!.findViewById(R.id.txtStar)

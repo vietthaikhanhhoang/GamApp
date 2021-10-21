@@ -9,10 +9,18 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barservicegam.app.R
+import com.customadapter.ListNewsAdapter
 import com.customadapter.setting.settingtextAdapter
+import com.fragmentcustom.*
+import com.fragmentcustom.autoplayvideo.AutoplayVideoFragment
+import com.fragmentcustom.football.GuessFragment
+import com.fragmentcustom.football.dddbtk.MatchDetailFragment
+import com.fragula.extensions.addFragment
 import com.lib.eventbus.EventBusFire
 import data.DataPreference
 import data.PREFERENCE
@@ -80,10 +88,15 @@ class settingtext @JvmOverloads constructor(
         rclView = view.findViewById(R.id.rclView)
         EventBus.getDefault().register(this)
 
-        val autoPlay = JSONObject()
-        autoPlay.put("icon", "icon_setting_term")
-        autoPlay.put("text", "Điều khoản sử dụng")
-        mList.put(autoPlay)
+        val jObjectTerm = JSONObject()
+        jObjectTerm.put("icon", "icon_setting_term")
+        jObjectTerm.put("text", "Điều khoản sử dụng")
+        mList.put(jObjectTerm)
+
+        val jObjectAutoPlay = JSONObject()
+        jObjectAutoPlay.put("icon", "icon_setting_term")
+        jObjectAutoPlay.put("text", "Cài đặt autoPlay")
+        mList.put(jObjectAutoPlay)
 
         val sharedPreference: DataPreference = DataPreference(context)
         val accountUser = sharedPreference.getValueJSON(PREFERENCE.ACCOUNTUSER)

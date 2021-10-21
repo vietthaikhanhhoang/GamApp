@@ -19,11 +19,13 @@ import com.main.app.MainActivity
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import model.PListingResponse
 import model.PVideo
-import org.json.JSONArray
-import org.json.JSONObject
 
 
-public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.DocumentOrBuilder>, var enableLoadMore:Boolean = true, var isRelative:Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+public class ListNewsAdapter(
+    var mList: MutableList<model.PListingResponse.DocumentOrBuilder>,
+    var enableLoadMore: Boolean = true,
+    var isRelative: Boolean = false
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var positionVideoPlay: Int = -1
     lateinit var bvPlayerVideo: BVPlayerVideo
 
@@ -40,12 +42,18 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
 
         init {
 
-            val typefaceTitle = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaysemibold.ttf")
+            val typefaceTitle = Typeface.createFromAsset(
+                txtDesc.getContext().assets,
+                "fonts/sfuidisplaysemibold.ttf"
+            )
             txtTitle.setTypeface(typefaceTitle)
 //            txtTitle.setTextColor(Color.parseColor("#444444"))
             txtTitle.setTextColor(txtDesc.getResources().getColor(R.color.titlenewscolor, null))
 
-            val typefaceDesc = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaymedium.ttf")
+            val typefaceDesc = Typeface.createFromAsset(
+                txtDesc.getContext().assets,
+                "fonts/sfuidisplaymedium.ttf"
+            )
             txtDesc.setTypeface(typefaceDesc)
             txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.descnewscolor, null))
 
@@ -76,11 +84,17 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
         var imgComment: ImageView = itemView!!.findViewById(R.id.imgComment)
 
         init {
-            val typefaceTitle = Typeface.createFromAsset(txtTitle.getContext().assets, "fonts/sfuidisplaysemibold.ttf")
+            val typefaceTitle = Typeface.createFromAsset(
+                txtTitle.getContext().assets,
+                "fonts/sfuidisplaysemibold.ttf"
+            )
             txtTitle.setTypeface(typefaceTitle)
             txtTitle.setTextColor(txtTitle.getResources().getColor(R.color.titlenewscolor, null))
 
-            val typefaceDesc = Typeface.createFromAsset(txtDesc.getContext().assets, "fonts/sfuidisplaymedium.ttf")
+            val typefaceDesc = Typeface.createFromAsset(
+                txtDesc.getContext().assets,
+                "fonts/sfuidisplaymedium.ttf"
+            )
             txtDesc.setTypeface(typefaceDesc)
             txtDesc.setTextColor(txtDesc.getResources().getColor(R.color.descnewscolor, null))
         }
@@ -471,6 +485,10 @@ public class ListNewsAdapter(var mList: MutableList<model.PListingResponse.Docum
 
             holder.constraintLayoutP.setOnClickListener{
                 if(listener != null) {
+                    //luu bai
+                    val document = mList.get(position)
+                    Log.d("vietnb", "document AAA: $document")
+
                     this.listener!!.click_ListNewsAdapterListener(position)
                 }
             }

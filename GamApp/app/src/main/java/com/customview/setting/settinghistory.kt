@@ -8,10 +8,16 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barservicegam.app.R
 import com.customadapter.setting.settingtextAdapter
+import com.fragmentcustom.SettingFragment
+import com.fragmentcustom.bookmark.BookmarkFragment
+import com.fragmentcustom.football.GuessFragment
+import com.fragmentcustom.football.dddbtk.MatchDetailFragment
+import com.fragula.extensions.addFragment
 import com.lib.eventbus.EventBusFire
 import data.DataPreference
 import data.PREFERENCE
@@ -52,5 +58,13 @@ class settinghistory @JvmOverloads constructor(
         layoutMark = view.findViewById(R.id.layoutMark)
         layoutReaded = view.findViewById(R.id.layoutReaded)
         layoutComment = view.findViewById(R.id.layoutComment)
+
+        layoutReaded.setOnClickListener {
+            val fragment = findFragment<SettingFragment>()
+            fragment.addFragment<BookmarkFragment> {
+                "param1" to ""
+                "param2" to ""
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.main.app
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
@@ -12,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import com.barservicegam.app.BuildConfig
 import com.barservicegam.app.R
 import com.facebook.*
@@ -39,6 +41,8 @@ import com.lib.*
 import com.lib.eventbus.EventBusFire
 import data.DataPreference
 import data.PREFERENCE
+import kotlinx.coroutines.launch
+import model.PArticle
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.util.*
@@ -247,6 +251,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun getArticleInDocument(){
+        lifecycleScope.launch {
+//            documentRepo?.getDocumentInArt().collect {
+//
+//            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -267,6 +279,9 @@ class MainActivity : AppCompatActivity() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
         auth = Firebase.auth
+
+        /////luu tru data protobuf
+//        documentRepo = DocumentImpl(documentDataStore)
 
         ////Setting callbackPhone
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {

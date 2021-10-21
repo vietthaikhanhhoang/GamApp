@@ -76,10 +76,42 @@
             <com.customview.setting.settingtext
                 android:id="@+id/settingtextid"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settingswitchid"></com.customview.setting.settingtext>
+                app:layout_constraintTop_toBottomOf="@+id/settingswitchid">
+            </com.customview.setting.settingtext>
+            <LinearLayout
+                android:id="@+id/layoutAutoPlay"
+                app:layout_constraintTop_toBottomOf="@+id/settingtextid"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textAutoPlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Cài đặt autoPlay: isOFF"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutProtobuf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/layoutAutoPlay">
+
+                <TextView
+                    android:id="@+id/txtNameProtobuf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Tên protobuf: "
+                    android:textSize="16sp" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

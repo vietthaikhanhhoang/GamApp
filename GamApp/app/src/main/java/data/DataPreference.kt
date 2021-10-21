@@ -27,6 +27,8 @@ object PREFERENCE {
     const val ARRAYCATEGORYVIDEO = "ARRAYCATEGORYVIDEO"
 
     const val MAPIDNAMECOVERWEBSITE = "MAPIDNAMECOVERWEBSITE"
+
+    const val ARRAYNEWSREADED = "ARRAYNEWSREADED"
 }
 
 class DataPreference(val context: Context) {
@@ -37,7 +39,6 @@ class DataPreference(val context: Context) {
     )
 
     fun getValueArray(KEY_NAME: String): ArrayList<JSONObject> {
-
         val editor: SharedPreferences.Editor = sharedPref.edit()
 
         if(sharedPref.getString(KEY_NAME, "")!!.isNotEmpty()) {
@@ -86,17 +87,6 @@ class DataPreference(val context: Context) {
         editor.putString(KEY_NAME, jsonString)
         editor.commit()
     }
-
-//    fun saveMapIntJArray(KEY_NAME: String, value: Map<Int, String>) {
-//        val editor: SharedPreferences.Editor = sharedPref.edit()
-//
-//        val gson = Gson()
-//        val strValue = gson.toJson(value).toString()
-//        val jsonArray = JSONObject(strValue)
-//        val jsonString = jsonArray.toString()
-//        editor.putString(KEY_NAME, jsonString)
-//        editor.commit()
-//    }
 
     fun getValueJObjectMap(KEY_NAME: String): Map<Int, String> {
         val value = sharedPref.getString(KEY_NAME, "")!!

@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -15,6 +17,15 @@ import com.customadapter.ListNewsAdapter
 import com.fragula.extensions.addFragment
 import com.khaolok.myloadmoreitem.OnLoadMoreListener
 import com.khaolok.myloadmoreitem.RecyclerViewLoadMoreScroll
+import com.lib.Utils
+import com.main.app.MainActivity
+import data.DataPreference
+import data.PREFERENCE
+import data.datastorepreference.AUTOPLAY_MODE
+import data.datastorepreference.newsreadedmanager
+import data.datastorepreference.settingmanager
+import data.datastoreproto.DocumentProtoManager
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -37,6 +48,8 @@ private const val ARG_PARAM4 = "param4"
  * create an instance of this fragment.
  */
 class HomeFragment : Fragment() {
+    private lateinit var newsreadedmanager: newsreadedmanager
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -85,6 +98,9 @@ class HomeFragment : Fragment() {
             }
         })
         rclView.addOnScrollListener(scrollListener)
+
+        //////luu proto
+        newsreadedmanager = newsreadedmanager(requireContext())
 
         refreshData()
         return view
@@ -145,6 +161,7 @@ class HomeFragment : Fragment() {
                                     val doc = arrNews.get(position)
                                     val art = doc.art
 
+                                    observeArrayNewsProto(art)
                                     addFragment<DetailNewsFragment> {
                                         ARG_PARAM1 to ""
                                         ARG_PARAM2 to ""
@@ -156,6 +173,44 @@ class HomeFragment : Fragment() {
                     }
                 } else {
                     Log.e("RETROFIT_ERROR", response.code().toString())
+                }
+            }
+
+            private fun observeArrayNewsProto(art: PArticle.ArticleMsg) {
+                lifecycleScope.launch {
+
+                    val lid = art.lid
+                    val documentProtoManager = DocumentProtoManager(requireContext(), lid)
+                    documentProtoManager.updateArt(art)
+
+                    newsreadedmanager.newsreaded.asLiveData().observe(requireActivity()) {
+                        Log.d("vietnb", "luc dau: $it")
+                        Log.d("vietnb", "luc lid: $lid")
+
+                        Log.d("vietnb", "")
+                        if(it == null) {
+                            lifecycleScope.launch {
+                                newsreadedmanager.setNewsReaded(lid)
+                            }
+                        } else {
+                            lifecycleScope.launch {
+                                val originValue = it.toString()
+                                if(!originValue.contains(lid)) {
+                                    val value = "$originValue,$lid"
+                                    newsreadedmanager.setNewsReaded(value)
+                                }
+                            }
+                        }
+
+
+//                    newsreadedmanager.newsreaded.asLiveData().observe(requireActivity()) {
+//
+//                        Log.d("vietnb", "value sau a $lid")
+//                        Log.d("vietnb", "dong sau b $it")
+//
+//
+//
+                    }
                 }
             }
 
